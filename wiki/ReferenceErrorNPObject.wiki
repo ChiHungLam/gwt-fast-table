@@ -1,4 +1,4 @@
-#summary *Warning:* bug in Chrome browser during dev mode
+#summary Warning: bug in Chrome browser during dev mode
 #labels ReferenceError,NPObject,GWT,Chrome,Bug
 
 = Introduction =
