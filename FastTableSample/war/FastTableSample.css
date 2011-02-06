@@ -1,0 +1,57 @@
+/** Add css rules here for your application. */
+.name {
+	font-size: 1em;
+	font-weight: bold;
+	color: blue;
+	text-align: right;
+	border-width: thin;
+	padding-right: 1.5em;
+	cursor: pointer;
+}
+
+table {
+	border-collapse: collapse;
+	border-width: medium;
+	margin: 2em;
+	border-style: outset;
+	border-color: gray;
+	border-collapse: collapse;
+}
+
+td {
+	padding-left: 1em;
+	padding-right: 1em;
+	border-color: black;
+	border-width: thin;
+	border-style: inset;
+	border-color: gray;
+}
+
+tr {
+	padding: 5px;
+}
+
+.street {
+	border-width: thin;
+	border-right-width: 0;
+}
+
+.city {
+	border-width: thin;
+	border-left-width: 0;
+	border-right-width: 0;
+}
+
+.state {
+	border-width: thin;
+	border-left-width: 0;
+}
+
+.zip {
+	border-width: thin;
+	cursor: pointer;
+}
+
+.highlight {
+	background-color: yellow;
+}
