@@ -20,7 +20,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  * 
  * @author jheyne
  */
-public abstract class Element {
+public abstract class HtmlElement {
 
 	enum State {
 		StartTag, Contents, EndTag
@@ -30,7 +30,7 @@ public abstract class Element {
 
 	State currentState = State.StartTag;
 
-	public Element(StringBuilder builder) {
+	public HtmlElement(StringBuilder builder) {
 		super();
 		this.builder = builder;
 		this.builder.append('<');
@@ -47,7 +47,7 @@ public abstract class Element {
 	 *            Attribute value
 	 * @return The receiver
 	 */
-	public Element addAttribute(String key, String value) {
+	public HtmlElement addAttribute(String key, String value) {
 		assert isAppropriate(State.StartTag) : "attributes should be added before "
 				+ currentState;
 		builder.append(key);
@@ -65,7 +65,7 @@ public abstract class Element {
 	 *            The text to add.
 	 * @return The receiver
 	 */
-	public Element addContents(String contents) {
+	public HtmlElement addContents(String contents) {
 		assert isAppropriate(State.Contents) : "contents should be set before "
 				+ currentState;
 		if (currentState != State.Contents) {
@@ -78,18 +78,26 @@ public abstract class Element {
 		return this;
 	}
 
+	public HtmlElement setContentsRaw(String contents) {
+		addContents(null);
+		if (contents != null) {
+			builder.append(contents);
+		}
+		return this;
+	}
+	
+
 	/**
 	 * @param wrapper
 	 *            Encapsulates what we need to know to find the handler when an
 	 *            event occurs
 	 * @param objectId
 	 *            Identifier for the domain model instance
-	 * @param field
-	 *            The domain model field to which the handler corresponds
+	 * @param columnIndex TODO
 	 * @return
 	 */
-	public Element addHandler(CellHandlerWrapper<?> wrapper, String objectId,
-			String field) {
+	public HtmlElement addHandler(CellHandlerWrapper<?> wrapper, String objectId,
+			int columnIndex) {
 		assert isAppropriate(State.StartTag) : "attributes should be added before "
 				+ currentState;
 		for (String onEvent : wrapper.onEvents) {
@@ -101,10 +109,10 @@ public abstract class Element {
 			builder.append("','");
 			builder.append(objectId);
 			builder.append("','");
-			builder.append(field);
-			builder.append("','");
 			builder.append(onEvent);
-			builder.append("')\" ");
+			builder.append("',");
+			builder.append(columnIndex);
+			builder.append(")\" ");
 		}
 		return this;
 	}
@@ -141,7 +149,7 @@ public abstract class Element {
 	 * @param id
 	 * @return
 	 */
-	public Element setId(String id) {
+	public HtmlElement setId(String id) {
 		addAttribute("id", id);
 		return this;
 	}
@@ -151,7 +159,7 @@ public abstract class Element {
 	 * @param style The class attribute
 	 * @return The receiver
 	 */
-	public Element setStyle(String style) {
+	public HtmlElement setStyle(String style) {
 		assert isAppropriate(State.StartTag) : "style should be set before "
 				+ currentState;
 		return addAttribute("class", style);
@@ -162,7 +170,7 @@ public abstract class Element {
 	 * @param styles
 	 * @return
 	 */
-	public Element setStyles(ArrayList<String> styles) {
+	public HtmlElement setStyles(ArrayList<String> styles) {
 		assert isAppropriate(State.StartTag) : "style should be set before "
 				+ currentState;
 		if (!styles.isEmpty()) {

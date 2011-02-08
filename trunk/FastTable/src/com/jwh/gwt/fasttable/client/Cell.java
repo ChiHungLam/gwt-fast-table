@@ -12,7 +12,7 @@ package com.jwh.gwt.fasttable.client;
  * 
  * @author jheyne
  */
-public class Cell extends Element {
+public class Cell extends HtmlElement {
 
 	public Cell(StringBuilder builder) {
 		super(builder);

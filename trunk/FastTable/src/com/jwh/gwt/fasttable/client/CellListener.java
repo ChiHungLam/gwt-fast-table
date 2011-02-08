@@ -14,11 +14,5 @@ package com.jwh.gwt.fasttable.client;
  */
 public interface CellListener<T> {
 
-	/**
-	 * @param object The model object affected by the event
-	 * @param event The event which was triggered
-	 * @param field The column/model field indicator
-	 * @param refId The id of the table row
-	 */
-	public void handleCellEvent(T object, String event, String field, String refId);
+	public void handlerCellEvent(CellEvent<T> cellEvent);
 }
