@@ -9,10 +9,16 @@ public class HeaderRow extends HtmlElement {
 	public HeaderRow(StringBuilder builder) {
 		super(builder);
 	}
+	HeaderCell currentCell = null;
 	
 	public HeaderCell newHeaderCell(String columnName, boolean sortable) {
-		HeaderCell headerCell = new HeaderCell(columnName, sortable, builder);
+		if (currentCell != null) {
+			currentCell.cleanup();
+		}
+		HeaderCell headerCell = new HeaderCell(columnName, builder, sortable);
+		headerCell.addContents(columnName);
 		headerCells.add(headerCell);
+		currentCell = headerCell;
 		return headerCell;
 	}
 
@@ -38,5 +44,12 @@ public class HeaderRow extends HtmlElement {
 
 	public int getColumnCount() {
 		return headerCells.size();
+	}
+	@Override
+	public void cleanup() {
+		if (currentCell != null) {
+			currentCell.cleanup();
+		}
+		super.cleanup();
 	}
 }

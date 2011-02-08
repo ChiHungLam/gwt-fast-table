@@ -58,6 +58,10 @@ public abstract class TableBuilder<T> {
 		}
 	}
 	
+	public void setContents(ArrayList<T> allObjects) {
+		this.allObjects = allObjects;
+	}
+	
 	protected Table<T> table = new Table<T>();
 	
 	public String getHtml() {
@@ -66,9 +70,9 @@ public abstract class TableBuilder<T> {
 		table.reset();
 		buildHeaderPrivate();
 		for (T t : filteredObjects) {
-			Row row = table.newRow();
-			table.register(t, row);
-			populateRowCells(t, row);
+			final Row row = table.newRow();
+			final String refId = table.register(t, row);
+			populateRowCells(t, row, refId);
 		}
 		table.cleanupCurrentRow();
 		buildFooterPrivate();
@@ -78,8 +82,9 @@ public abstract class TableBuilder<T> {
 	/**
 	 * @param t the domain object underlying the row
 	 * @param row Add cells to the row
+	 * @param refId TODO
 	 */
-	protected abstract void populateRowCells(T t, Row row);
+	protected abstract void populateRowCells(T t, Row row, String refId);
 
 	private void buildFooterPrivate() {
 		final StringBuilder b = new StringBuilder();
