@@ -13,8 +13,10 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.jwh.gwt.fasttable.client.CellEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
+import com.jwh.gwt.fasttable.client.ElementNotFound;
 import com.jwh.gwt.fasttable.client.Row;
 import com.jwh.gwt.fasttable.client.Table;
 
@@ -30,7 +32,7 @@ public class FastTableSample implements EntryPoint, Style {
 	@Override
 	public void onModuleLoad() {
 		final Element body = RootPanel.getBodyElement();
-		final Table<SampleModel> table = new Table<SampleModel>("Simple");
+		final Table<SampleModel> table = new Table<SampleModel>();
 		CellListener<SampleModel> cellListener = buildCellListener(body);
 		final CellHandlerWrapper<SampleModel> cellHandler = table
 				.registerCellHandler(ON_CLICK, cellListener);
@@ -47,12 +49,12 @@ public class FastTableSample implements EntryPoint, Style {
 			// add style info, an event handler, and set the contents
 			// here we only add the event handler to NAME and ZIP
 			row.newCell().setStyle(NAME)
-					.addHandler(cellHandler, objectId, NAME)
+					.addHandler(cellHandler, objectId, 0)
 					.addContents(sample.name);
 			row.newCell().setStyle(STREET).addContents(sample.street);
 			row.newCell().setStyle(CITY).addContents(sample.city);
 			row.newCell().setStyle(STATE).addContents(sample.state);
-			row.newCell().setStyle(ZIP).addHandler(cellHandler, objectId, ZIP)
+			row.newCell().setStyle(ZIP).addHandler(cellHandler, objectId, 4)
 					.addContents(sample.zip);
 		}
 		final String html = table.toString();
@@ -62,59 +64,30 @@ public class FastTableSample implements EntryPoint, Style {
 
 	private CellListener<SampleModel> buildCellListener(final Element body) {
 		return new CellListener<SampleModel>() {
+
 			@Override
-			public void handleCellEvent(SampleModel object, String event,
-					String field, String refId) {
-				if (ON_CLICK.equalsIgnoreCase(event)) {
-					handleClick(object, event, field);
-				} else {
-					handleMouseOver(body, event, field, refId);
+			public void handlerCellEvent(CellEvent<SampleModel> event) {
+				switch (event.getOnEvent()) {
+				case onClick:
+					Window.alert("Event: " + event.getOnEvent() + "\nObject: "
+							+ event.domainObject.toString() + "\nColumn: " + event.column);
+					break;
+				case onMouseOver:
+					try {
+						event.getColumnElement(body.getOwnerDocument()).addClassName(HIGHLIGHT);
+					} catch (ElementNotFound e1) {
+					}
+					break;
+				case onMouseOut:
+					try {
+						event.getColumnElement(body.getOwnerDocument()).removeClassName(HIGHLIGHT);
+					} catch (ElementNotFound e1) {
+					}
+					break;
+				default:
+					break;
 				}
-			}
-
-			/**
-			 * The user clicked. Popup an alert showing what we know
-			 * 
-			 * @param object
-			 *            The model object
-			 * @param event
-			 *            The event which was triggered
-			 * @param field
-			 *            identifier for the cell/field which triggered the
-			 *            event
-			 */
-			private void handleClick(SampleModel object, String event,
-					String field) {
-				Window.alert("Event: " + event + "\nObject: "
-						+ object.toString() + "\nField: " + field);
-			}
-
-			/**
-			 * Toggle highlighting of the cells triggering the event
-			 * @param body The root page element
-			 * @param event The event triggered
-			 * @param field Indicates the cell/field which triggered the event
-			 * @param refId Identifier for the row and model object
-			 */
-			private void handleMouseOver(final Element body, String event,
-					String field, String refId) {
-				// demonstrates that we know what row the event was
-				// on
-				com.google.gwt.dom.client.Element elementForRow = body
-						.getOwnerDocument().getElementById(refId);
-				com.google.gwt.dom.client.Element firstChild = elementForRow
-						.getFirstChildElement();
-				// demonstrates field dependent behavior
-				com.google.gwt.dom.client.Element elementForField = NAME
-						.equalsIgnoreCase(field) ? firstChild : firstChild
-						.getNextSiblingElement().getNextSiblingElement()
-						.getNextSiblingElement().getNextSiblingElement();
-				// demonstrates event dependent behavior
-				if (ON_MOUSE_OVER.equalsIgnoreCase(event)) {
-					elementForField.addClassName(HIGHLIGHT);
-				} else {
-					elementForField.removeClassName(HIGHLIGHT);
-				}
+				
 			}
 		};
 	}
