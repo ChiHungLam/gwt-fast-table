@@ -14,6 +14,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.jwh.gwt.fasttable.client.CellEvent;
+import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.ElementNotFound;
@@ -25,20 +26,13 @@ import com.jwh.gwt.fasttable.client.Table;
  */
 public class FastTableSample implements EntryPoint, Style {
 
-	private static final String ON_MOUSE_OUT = "onMouseOut";
-	private static final String ON_MOUSE_OVER = "onMouseOver";
-	private static final String ON_CLICK = "onClick";
-
 	@Override
 	public void onModuleLoad() {
 		final Element body = RootPanel.getBodyElement();
 		final Table<SampleModel> table = new Table<SampleModel>();
 		CellListener<SampleModel> cellListener = buildCellListener(body);
 		final CellHandlerWrapper<SampleModel> cellHandler = table
-				.registerCellHandler(ON_CLICK, cellListener);
-		// note that the same call handler can handle multiple events
-		cellHandler.addEvent(ON_MOUSE_OVER);
-		cellHandler.addEvent(ON_MOUSE_OUT);
+				.registerCellHandler(cellListener, OnEvent.onClick, OnEvent.onMouseOver, OnEvent.onMouseOut);
 		// get a bunch of model objects
 		final ArrayList<SampleModel> samples = SampleModel.getSamples(1000);
 		// add rows and cells for the model objects
