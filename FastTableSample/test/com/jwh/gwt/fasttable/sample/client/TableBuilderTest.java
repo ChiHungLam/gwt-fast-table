@@ -3,8 +3,6 @@ package com.jwh.gwt.fasttable.sample.client;
 import org.junit.Test;
 
 import com.jwh.gwt.fasttable.client.CellEvent;
-import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
-import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.HeaderRow;
 import com.jwh.gwt.fasttable.client.Row;
@@ -18,12 +16,25 @@ public class TableBuilderTest implements Style {
 		final TableBuilder<SampleModel> builder = new TableBuilder<SampleModel>() {
 
 			@Override
+			public void buildFooter(Row row) {
+				row.newCell().addContents(NAME);
+				row.newCell().addContents(STREET);
+				row.newCell().addContents(CITY);
+				row.newCell().addContents(STATE);
+				row.newCell().addContents(ZIP);
+			}
+			@Override
 			public void buildHeader(HeaderRow headerRow) {
+				CellListener<SampleModel> sortListener = buildSortListener();
 				headerRow.newHeaderCell(NAME, true);
 				headerRow.newHeaderCell(STREET, true);
 				headerRow.newHeaderCell(CITY, true);
 				headerRow.newHeaderCell(STATE, true);
 				headerRow.newHeaderCell(ZIP, true);
+			}
+			private CellListener<SampleModel> buildSortListener() {
+				// TODO Auto-generated method stub
+				return null;
 			}
 			@Override
 			protected void populateRowCells(SampleModel t, Row row, String refId) {
@@ -53,7 +64,7 @@ public class TableBuilderTest implements Style {
 					}
 				};
 			}};
-			builder.setContents(SampleModel.getTestSamples(10));
+			builder.setContents(SampleModel.getTestSamples(1));
 			String html = builder.getHtml();
 			System.out.println(html);
 	}

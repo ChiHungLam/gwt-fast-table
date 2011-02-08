@@ -15,7 +15,7 @@ public class GenericElement extends HtmlElement {
 		return new GenericElement("tfoot", builder);
 	}
 	public GenericElement(String tag, StringBuilder builder) {
-		super(builder);
+		super(builder, tag);
 		this.tag = tag;
 	}
 

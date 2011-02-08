@@ -70,14 +70,20 @@ public abstract class TableBuilder<T> {
 		doSort();
 		table.reset();
 		buildHeaderPrivate();
+		buildRows();
+		buildFooterPrivate();
+		return table.toString();
+	}
+
+	private void buildRows() {
+		GenericElement tbody = GenericElement.getTableBody(table.builder);
 		for (T t : filteredObjects) {
 			final Row row = table.newRow();
 			final String refId = table.register(t, row);
 			populateRowCells(t, row, refId);
 		}
 		table.cleanupCurrentRow();
-		buildFooterPrivate();
-		return table.toString();
+		tbody.cleanup();
 	}
 
 	/**
@@ -89,9 +95,9 @@ public abstract class TableBuilder<T> {
 
 	private void buildFooterPrivate() {
 		final StringBuilder b = new StringBuilder();
-		HeaderRow headerRow = new HeaderRow(b);
+		Row headerRow = new Row(b);
 		int length = b.length();
-		buildHeader(headerRow);
+		buildFooter(headerRow);
 		if (length != b.length()) {
 			headerRow.cleanup();
 			GenericElement tfoot = GenericElement.getTableFooter(table.builder);

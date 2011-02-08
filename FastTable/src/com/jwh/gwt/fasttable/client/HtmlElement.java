@@ -37,6 +37,14 @@ public abstract class HtmlElement {
 		this.builder.append(' ');
 	}
 
+	public HtmlElement(StringBuilder builder, String tag) {
+		super();
+		this.builder = builder;
+		this.builder.append('<');
+		this.builder.append(tag);
+		this.builder.append(' ');
+	}
+
 	/**
 	 * Add an attribute to the opening tag
 	 * 
