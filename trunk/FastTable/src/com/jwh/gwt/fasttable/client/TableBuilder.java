@@ -3,6 +3,7 @@ package com.jwh.gwt.fasttable.client;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+@Deprecated // Under construction
 public abstract class TableBuilder<T> {
 
 	Filter<T> defaultFilter = getDefaultFilter();
