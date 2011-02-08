@@ -9,6 +9,8 @@ package com.jwh.gwt.fasttable.client;
 
 import java.util.HashMap;
 
+import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
+
 public class Table<T> extends HtmlElement {
 	
 	public static String nextTableId() {
@@ -27,7 +29,7 @@ public class Table<T> extends HtmlElement {
 	 * In the current design, only 4 cell handlers can be defined per page. This
 	 * keeps track of the current count.
 	 */
-	static int instanceCounter = 0;
+	static int instanceCounter = 1;
 
 	/**
 	 * Used for generating unique row ids
@@ -181,17 +183,17 @@ public class Table<T> extends HtmlElement {
 	}
 
 	/**
-	 * @param onEvent
-	 *            The event ("onClick", "onBlur") for which to listen
 	 * @param cellListener
 	 *            Callback which responds to the event.
+	 * @param onEvent
+	 *            The event ("onClick", "onBlur") for which to listen
 	 * @return a wrapper which encapsulates all handler details, and which has
 	 *         been cached for later retrieval
 	 */
-	public CellHandlerWrapper<T> registerCellHandler(String onEvent,
-			CellListener<T> cellListener) {
+	public CellHandlerWrapper<T> registerCellHandler(CellListener<T> cellListener,
+			OnEvent... onEvent) {
 		final CellHandlerWrapper<T> wrapper = new CellHandlerWrapper<T>(
-				onEvent, cellListener);
+				cellListener, onEvent);
 		handlerLookup.put(wrapper.id, wrapper);
 		wrapper.setFunctionId(defineCellHandler());
 		return wrapper;

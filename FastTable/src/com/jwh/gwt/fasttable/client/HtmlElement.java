@@ -7,9 +7,8 @@
 
 package com.jwh.gwt.fasttable.client;
 
-import java.util.ArrayList;
-
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 
 /**
  * A simple API for programmatically constructing HTML. Designed for efficiency,
@@ -100,8 +99,8 @@ public abstract class HtmlElement {
 			int columnIndex) {
 		assert isAppropriate(State.StartTag) : "attributes should be added before "
 				+ currentState;
-		for (String onEvent : wrapper.onEvents) {
-			builder.append(onEvent);
+		for (OnEvent onEvent : wrapper.onEvents) {
+			builder.append(onEvent.name());
 			builder.append("=\"window.fctn");
 			builder.append(wrapper.functionId);
 			builder.append("('");
@@ -109,7 +108,7 @@ public abstract class HtmlElement {
 			builder.append("','");
 			builder.append(objectId);
 			builder.append("','");
-			builder.append(onEvent);
+			builder.append(onEvent.name());
 			builder.append("',");
 			builder.append(columnIndex);
 			builder.append(")\" ");
@@ -159,21 +158,10 @@ public abstract class HtmlElement {
 	 * @param style The class attribute
 	 * @return The receiver
 	 */
-	public HtmlElement setStyle(String style) {
+	public HtmlElement setStyle(String... styles) {
 		assert isAppropriate(State.StartTag) : "style should be set before "
 				+ currentState;
-		return addAttribute("class", style);
-	}
-
-	/**
-	 * Define multiple styles. Mutually exclusive with @see Element.setStyle. 
-	 * @param styles
-	 * @return
-	 */
-	public HtmlElement setStyles(ArrayList<String> styles) {
-		assert isAppropriate(State.StartTag) : "style should be set before "
-				+ currentState;
-		if (!styles.isEmpty()) {
+		if (styles.length > 0) {
 			builder.append("class=\"");
 			for (final String style : styles) {
 				builder.append(style);
@@ -184,4 +172,5 @@ public abstract class HtmlElement {
 		}
 		return this;
 	}
+
 }

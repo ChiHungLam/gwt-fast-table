@@ -9,6 +9,8 @@ package com.jwh.gwt.fasttable.client;
 
 import java.util.ArrayList;
 
+import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
+
 /**
  * @author jheyne Does the bookkeeping required for invoking event handles
  * @param <T>
@@ -32,13 +34,15 @@ public class CellHandlerWrapper<T> {
 	/**
 	 * All the events for which the handler applies
 	 */
-	public final ArrayList<String> onEvents = new ArrayList<String>();
+	public final ArrayList<OnEvent> onEvents = new ArrayList<OnEvent>();
 	int functionId;
 
-	public CellHandlerWrapper(String onEvent, CellListener<T> cellListener) {
+	public CellHandlerWrapper(CellListener<T> cellListener, OnEvent... onEvents) {
 		this.id = currentId++;
 		this.cellListener = cellListener;
-		this.onEvents.add(onEvent);
+		for (OnEvent event : onEvents) {
+			this.onEvents.add(event);
+		}
 
 	}
 
@@ -49,17 +53,6 @@ public class CellHandlerWrapper<T> {
 	 */
 	public void setFunctionId(int functionId) {
 		this.functionId = functionId;
-	}
-
-	/**
-	 * The same handler can be used to respond to multiple events. This helps
-	 * mitigate the 4 handler limit.
-	 * 
-	 * @param onEvent
-	 *            An event the handler should respond to
-	 */
-	public void addEvent(String onEvent) {
-		onEvents.add(onEvent);
 	}
 
 }
