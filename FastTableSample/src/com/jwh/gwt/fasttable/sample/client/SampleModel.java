@@ -36,6 +36,14 @@ public class SampleModel {
 		return answer;
 	}
 
+	public static ArrayList<SampleModel> getTestSamples(int count) {
+		final ArrayList<SampleModel> answer = new ArrayList<SampleModel>();
+		for (int i = 0; i < count; i++) {
+			answer.add(new SampleModel("Sally", "13 Cricket", "Bellevue", "NE", "45544"));
+		}
+		return answer;
+	}
+
 	public String city;
 	public String name;
 	public String state;
@@ -50,6 +58,18 @@ public class SampleModel {
 		this.state = randomSample(states);
 		this.zip = randomSample(zips);
 	}
+	
+
+	public SampleModel(String name, String street, String city, String state,
+			String zip) {
+		super();
+		this.city = city;
+		this.name = name;
+		this.state = state;
+		this.street = street;
+		this.zip = zip;
+	}
+
 
 	/**
 	 * @param samples Options available

@@ -13,10 +13,10 @@ package com.jwh.gwt.fasttable.sample.client;
  */
 public interface Style {
 
-	final static String CITY = "city";
-	final static String NAME = "name";
-	final static String STATE = "state";
-	final static String STREET = "street";
-	final static String ZIP = "zip";
+	final static String CITY = "City";
+	final static String NAME = "Name";
+	final static String STATE = "State";
+	final static String STREET = "Street";
+	final static String ZIP = "Zip";
 	final static String HIGHLIGHT = "highlight";
 }
