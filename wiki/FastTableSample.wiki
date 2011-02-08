@@ -2,7 +2,7 @@
 
 = Introduction =
 
-Sample project to demonstrate usage of gwt-fast-table. Subject to change, as described in RoadMap.
+Sample project to demonstrate usage of gwt-fast-table. Subject to change, as described in [RoadMap].
 
 
 = Details =
