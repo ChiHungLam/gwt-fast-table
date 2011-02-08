@@ -12,7 +12,7 @@ package com.jwh.gwt.fasttable.client;
  * 
  * @author jheyne
  */
-public class Row extends Element {
+public class Row extends HtmlElement {
 
 	/**
 	 * Cache the current cell for it can be cleaned up if a new cell is added or

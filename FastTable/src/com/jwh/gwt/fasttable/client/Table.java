@@ -9,8 +9,20 @@ package com.jwh.gwt.fasttable.client;
 
 import java.util.HashMap;
 
-public class Table<T> extends Element {
-
+public class Table<T> extends HtmlElement {
+	
+	public static String nextTableId() {
+		final String validCharacters = "QWERTYUIOPASDFGHJKLZXCVBNM";
+		final StringBuilder b = new StringBuilder();
+		int current = instanceCounter++;
+		while (current > 0) {
+			int remainder = current % validCharacters.length();
+			b.append(validCharacters.charAt(remainder));
+			current = current / validCharacters.length();
+		}
+		return b.toString();
+	}
+	
 	/**
 	 * In the current design, only 4 cell handlers can be defined per page. This
 	 * keeps track of the current count.
@@ -45,15 +57,9 @@ public class Table<T> extends Element {
 	 */
 	private final HashMap<String, T> lookup = new HashMap<String, T>();
 
-	/**
-	 * @param identifier
-	 *            Should begin with an alphabetic character It is used as a id
-	 *            prefix for row elements, so brevity is valued. This value
-	 *            should be unique for each table on a page.
-	 */
-	public Table(String identifier) {
+	public Table() {
 		super(new StringBuilder());
-		this.identifier = identifier;
+		this.identifier = nextTableId();
 	}
 
 	/**
@@ -70,48 +76,50 @@ public class Table<T> extends Element {
 		case 0:
 			defineCellHandler0(this);
 			return 0;
-		case 1:
-			defineCellHandler1(this);
-			return 1;
-		case 2:
-			defineCellHandler2(this);
-			return 2;
-		case 3:
-			defineCellHandler3(this);
-			return 3;
+//		case 1:
+//			defineCellHandler1(this);
+//			return 1;
+//		case 2:
+//			defineCellHandler2(this);
+//			return 2;
+//		case 3:
+//			defineCellHandler3(this);
+//			return 3;
 		default:
 			// should never get here
-			return 4;
+			defineCellHandler0(this);
+			return 0;
 		}
 	}
 
 	public native void defineCellHandler0(Table<T> x)/*-{
-		$wnd.fctn0 = function (stubId, objectId, field, event) {
-		x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(stubId,objectId,field,event); 
+		if($wnd.fctn0) return;
+		$wnd.fctn0 = function (stubId, objectId, event, columnIndex) {
+		x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)(stubId,objectId,event,columnIndex); 
 		};
 	}-*/
 	;
 
-	public native void defineCellHandler1(Table<T> x)/*-{
-		$wnd.fctn1 = function (stubId, objectId, field, event) {
-		x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(stubId,objectId,field,event); 
-		};
-	}-*/
-	;
-
-	public native void defineCellHandler2(Table<T> x)/*-{
-		$wnd.fctn2 = function (stubId, objectId, field, event) {
-		x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(stubId,objectId,field,event); 
-		};
-	}-*/
-	;
-
-	public native void defineCellHandler3(Table<T> x)/*-{
-		$wnd.fctn3 = function (stubId, objectId, field, event) {
-		x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(stubId,objectId,field,event); 
-		};
-	}-*/
-	;
+//	public native void defineCellHandler1(Table<T> x)/*-{
+//		$wnd.fctn1 = function (stubId, objectId, field, event) {
+//		x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(stubId,objectId,field,event); 
+//		};
+//	}-*/
+//	;
+//
+//	public native void defineCellHandler2(Table<T> x)/*-{
+//		$wnd.fctn2 = function (stubId, objectId, field, event) {
+//		x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(stubId,objectId,field,event); 
+//		};
+//	}-*/
+//	;
+//
+//	public native void defineCellHandler3(Table<T> x)/*-{
+//		$wnd.fctn3 = function (stubId, objectId, field, event) {
+//		x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(stubId,objectId,field,event); 
+//		};
+//	}-*/
+//	;
 
 	@Override
 	public String getTag() {
@@ -130,12 +138,12 @@ public class Table<T> extends Element {
 	 *            The event which was triggered
 	 */
 	public void handleCellEvent(String wrapperId, String objectId,
-			String field, String event) {
+			String event, int columnIndex) {
 		final T t = lookup.get(objectId);
 		final CellHandlerWrapper<T> cellHandlerWrapper = handlerLookup
 				.get(Integer.valueOf(wrapperId));
-		cellHandlerWrapper.cellListener.handleCellEvent(t, event, field,
-				objectId);
+		final CellEvent<T> cellEvent = new CellEvent<T>(event, t, objectId, columnIndex);
+		cellHandlerWrapper.cellListener.handlerCellEvent(cellEvent);
 	}
 
 	/**
@@ -191,8 +199,25 @@ public class Table<T> extends Element {
 
 	@Override
 	public String toString() {
+		cleanupCurrentRow();
 		cleanup();
 		return builder.toString();
+	}
+
+	public void cleanupCurrentRow() {
+		if (currentRow != null) {
+			currentRow.cleanup();
+			currentRow = null;
+		}		
+	}
+
+	/**
+	 * prepare to be reused to accommodate a change in the displayed objects
+	 */
+	public void reset() {
+		currentId = 0;
+		currentRow = null;
+		lookup.clear();
 	}
 
 }
