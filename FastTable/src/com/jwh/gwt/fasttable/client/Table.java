@@ -73,7 +73,7 @@ public class Table<T> extends HtmlElement {
 	 */
 	private int defineCellHandler() {
 		final int current = instanceCounter++;
-		assert current <= 3 : "currently only 4 cell handlers are supported per page";
+//		assert current <= 3 : "currently only 4 cell handlers are supported per page";
 		switch (current) {
 		case 0:
 			defineCellHandler0(this);
@@ -152,7 +152,7 @@ public class Table<T> extends HtmlElement {
 	 * @return a new row, first cleaning up any existing row
 	 */
 	public Row newRow() {
-		addContents("");
+		closeOpeningTag();
 		if (currentRow != null) {
 			currentRow.cleanup();
 		}
@@ -217,9 +217,11 @@ public class Table<T> extends HtmlElement {
 	 * prepare to be reused to accommodate a change in the displayed objects
 	 */
 	public void reset() {
-		currentId = 0;
+		builder.setLength(0);
+		writeOpeningTag();
 		currentRow = null;
 		lookup.clear();
+		currentState = State.StartTag;
 	}
 
 }

@@ -7,6 +7,9 @@ import com.google.gwt.dom.client.Element;
 
 public class CellEvent<T> {
 	public enum OnEvent {onClick, onDblClick, onKeyDown, onKeyPress, onKeyUp,onFocus, onBlur, onChange, onMouseDown, onMouseMove, onMouseOut, onMouseOver, onMouseUp, unknown}
+	/**
+	 * one-based. First column is 1.
+	 */
 	public int column;
 	public String eventIdentifier;
 	String refId;
@@ -51,10 +54,10 @@ public class CellEvent<T> {
 	}
 	public Element getColumnElement(Document document) throws ElementNotFound {
 		ArrayList<Element> all = getAllColumnElements(document);
-		if (column > all.size() - 1) {
+		if (column > all.size()) {
 			throw new ElementNotFound();
 		}
-		return all.get(column);
+		return all.get(column - 1);
 	}
 	public T getDomainObject() {
 		return domainObject;

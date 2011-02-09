@@ -32,11 +32,16 @@ public abstract class HtmlElement {
 	public HtmlElement(StringBuilder builder) {
 		super();
 		this.builder = builder;
+		writeOpeningTag();
+	}
+
+	protected void writeOpeningTag() {
 		this.builder.append('<');
 		this.builder.append(getTag());
 		this.builder.append(' ');
 	}
 
+	
 	public HtmlElement(StringBuilder builder, String tag) {
 		super();
 		this.builder = builder;
@@ -84,9 +89,13 @@ public abstract class HtmlElement {
 		}
 		return this;
 	}
+	
+	public HtmlElement closeOpeningTag() {
+		return addContents(null);
+	}
 
 	public HtmlElement setContentsRaw(String contents) {
-		addContents(null);
+		closeOpeningTag();
 		if (contents != null) {
 			builder.append(contents);
 		}
@@ -100,7 +109,7 @@ public abstract class HtmlElement {
 	 *            event occurs
 	 * @param objectId
 	 *            Identifier for the domain model instance
-	 * @param columnIndex TODO
+	 * @param columnIndex One-based. First column is 1.
 	 * @return
 	 */
 	public HtmlElement addHandler(CellHandlerWrapper<?> wrapper, String objectId,
@@ -128,6 +137,7 @@ public abstract class HtmlElement {
 	 * Assure that the entire element is manifested as a string
 	 */
 	public void cleanup() {
+		closeOpeningTag();
 		if (currentState != State.EndTag) {
 			builder.append("</");
 			builder.append(getTag());

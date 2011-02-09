@@ -42,6 +42,7 @@ public class Row extends HtmlElement {
 	 * @return a new cell after cleaning up any current cell
 	 */
 	public Cell newCell() {
+		closeOpeningTag();
 		addContents("");
 		if (currentCell != null) {
 			currentCell.cleanup();
