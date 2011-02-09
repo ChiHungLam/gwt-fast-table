@@ -2,14 +2,14 @@ package com.jwh.gwt.fasttable.sample.client;
 
 import org.junit.Test;
 
+import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent;
 import com.jwh.gwt.fasttable.client.CellListener;
-import com.jwh.gwt.fasttable.client.HeaderRow;
 import com.jwh.gwt.fasttable.client.Row;
 import com.jwh.gwt.fasttable.client.TableBuilder;
 
 
-public class TableBuilderTest implements Style {
+public class TableBuilderTest implements SampleStyle {
 
 	@Test
 	public void test() throws Exception {
@@ -23,19 +23,15 @@ public class TableBuilderTest implements Style {
 				row.newCell().addContents(STATE);
 				row.newCell().addContents(ZIP);
 			}
-			@Override
-			public void buildHeader(HeaderRow headerRow) {
-				CellListener<SampleModel> sortListener = buildSortListener();
-				headerRow.newHeaderCell(NAME, true);
-				headerRow.newHeaderCell(STREET, true);
-				headerRow.newHeaderCell(CITY, true);
-				headerRow.newHeaderCell(STATE, true);
-				headerRow.newHeaderCell(ZIP, true);
+			
+			public void buildHeader(TableBuilder<SampleModel>.SortableHeaderRow headerRow) {
+				headerRow.newHeaderCell(NAME);
+				headerRow.newHeaderCell(STREET);
+				headerRow.newHeaderCell(CITY);
+				headerRow.newHeaderCell(STATE);
+				headerRow.newHeaderCell(ZIP);
 			}
-			private CellListener<SampleModel> buildSortListener() {
-				// TODO Auto-generated method stub
-				return null;
-			}
+			
 			@Override
 			protected void populateRowCells(SampleModel t, Row row, String refId) {
 				CellListener<SampleModel> listener = buildCellListener();
@@ -63,9 +59,15 @@ public class TableBuilderTest implements Style {
 						}						
 					}
 				};
+			}
+			@Override
+			public Panel getContainingElement() {
+				return null;
 			}};
 			builder.setContents(SampleModel.getTestSamples(1));
 			String html = builder.getHtml();
+			builder.table.reset();
+			html = builder.getHtml();
 			System.out.println(html);
 	}
 }
