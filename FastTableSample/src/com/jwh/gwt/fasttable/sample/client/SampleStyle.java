@@ -7,11 +7,13 @@
 
 package com.jwh.gwt.fasttable.sample.client;
 
+import com.jwh.gwt.fasttable.client.Style;
+
 /**
  * @author jheyne
  * Constants corresponding to entries in the CSS file
  */
-public interface Style {
+public interface SampleStyle extends Style {
 
 	final static String CITY = "City";
 	final static String NAME = "Name";
@@ -19,4 +21,5 @@ public interface Style {
 	final static String STREET = "Street";
 	final static String ZIP = "Zip";
 	final static String HIGHLIGHT = "highlight";
+	
 }
