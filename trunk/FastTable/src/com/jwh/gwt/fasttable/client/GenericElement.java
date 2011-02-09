@@ -2,6 +2,9 @@ package com.jwh.gwt.fasttable.client;
 
 public class GenericElement extends HtmlElement {
 
+	public static GenericElement getHeaderCell(StringBuilder builder) {
+		return new GenericElement("th", builder);
+	}
 	public static GenericElement getCell(StringBuilder builder) {
 		return new GenericElement("td", builder);
 	}
