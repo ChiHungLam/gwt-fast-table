@@ -9,6 +9,6 @@ This page is to advise developers of anticipated changes.
 
 What is coming:
   * ~~*refactor callbacks* - use a Callback Event which encapsulates callback features and has services such as _getRowElement()_ and _getCellElement()_~~ *DONE*
-  * *eliminate the limitation on the number of callbacks*
+  * ~~*eliminate the limitation on the number of callbacks*~~ *DONE*
   * ~~*eliminate need to specify table name*~~ *DONE*
-  * *Table Utility* - To easily manage headers, footers, column sorting, content filtering
+  * ~~*Table Utility* - To easily manage headers, footers, column sorting, content filtering~~ *DONE*
