@@ -12,3 +12,4 @@ What is coming:
   * ~~*eliminate the limitation on the number of callbacks*~~ *DONE*
   * ~~*eliminate need to specify table name*~~ *DONE*
   * ~~*Table Utility* - To easily manage headers, footers, column sorting, content filtering~~ *DONE*
+  * *Performance Tuning*
