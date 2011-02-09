@@ -3,9 +3,11 @@
 
 = Introduction =
 
-When running in Dev Mode (for both "Debug" and "Run") the page initializes correctly. However, listeners fail. In the sample project, when mouse passes over a "Name" or "Zip" cell, "Uncaught ReferenceError: NPObject deleted" is encountered, and the cell is not highlighted.
+*This is no longer an issue with current code*
 
-Not a problem in IE 7.0 or Firefox 3.6.12.
+~~When running in Dev Mode (for both "Debug" and "Run") the page initializes correctly. However, listeners fail. In the sample project, when mouse passes over a "Name" or "Zip" cell, "Uncaught ReferenceError: NPObject deleted" is encountered, and the cell is not highlighted.~~
+
+~~Not a problem in IE 7.0 or Firefox 3.6.12.~~
 
 = Details =
 
