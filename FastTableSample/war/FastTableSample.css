@@ -31,6 +31,11 @@ tr {
 	padding: 5px;
 }
 
+thead {
+	background: #9cf;
+	text-align: center;
+}
+
 .street {
 	border-width: thin;
 	border-right-width: 0;
@@ -54,4 +59,40 @@ tr {
 
 .highlight {
 	background-color: yellow;
+}
+
+.sortAscending {
+	padding-right: 20px;
+	background-image: url("icons/ascending.gif");
+	background-position: right;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+
+.sortDescending {
+	padding-right: 20px;
+	background-image: url("icons/descending.gif");
+	background-position: right;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+
+.sortAscendingGrey {
+	padding-right: 20px;
+	background-image: url("icons/ascending_grey.gif");
+	background-position: right;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+
+.sortDescendingGrey {
+	padding-right: 20px;
+	background-image: url("icons/descending_grey.gif");
+	background-position: right;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+
+.sorting {
+	cursor: wait;
 }
