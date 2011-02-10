@@ -82,13 +82,13 @@ public class SampleModel {
 	@Override
 	public String toString() {
 		final StringBuilder b = new StringBuilder(name);
-		b.append('\t');
+		b.append(" - ");
 		b.append(street);
-		b.append('\t');
+		b.append(", ");
 		b.append(city);
-		b.append('\t');
+		b.append(", ");
 		b.append(state);
-		b.append('\t');
+		b.append(" ");
 		b.append(zip);
 		return b.toString();
 	}

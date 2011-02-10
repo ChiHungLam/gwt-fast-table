@@ -25,11 +25,11 @@ public class TableBuilderTest implements SampleStyle {
 			}
 			
 			public void buildHeader(TableBuilder<SampleModel>.SortableHeaderRow headerRow) {
-				headerRow.newHeaderCell(NAME);
-				headerRow.newHeaderCell(BORDER_OPEN_RIGHT);
-				headerRow.newHeaderCell(BORDER_OPEN_LEFT_RIGHT);
-				headerRow.newHeaderCell(BORDER_OPEN_LEFT);
-				headerRow.newHeaderCell(BORDER);
+				headerRow.newHeaderCell();
+				headerRow.newHeaderCell();
+				headerRow.newHeaderCell();
+				headerRow.newHeaderCell();
+				headerRow.newHeaderCell();
 			}
 			
 			@Override

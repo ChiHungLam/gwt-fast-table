@@ -55,6 +55,8 @@ thead {
 
 .border {
 	border-width: thin;
+	border-color: black;
+	border-style: inset;
 }
 
 .cursorPointer {
@@ -97,6 +99,6 @@ thead {
 	cursor: pointer;
 }
 
-.sorting {
+.cursorWait {
 	cursor: wait;
 }
