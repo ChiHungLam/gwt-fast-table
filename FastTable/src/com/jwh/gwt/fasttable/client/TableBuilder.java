@@ -1,11 +1,12 @@
 package com.jwh.gwt.fasttable.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 
@@ -83,7 +84,10 @@ public abstract class TableBuilder<T> {
 				final CellListener<T> sortListener = new CellListener<T>() {
 					@Override
 					public void handlerCellEvent(CellEvent<T> sortEvent) {
-						getContainingElement().addStyleName(Style.SORTING);
+						try {
+							sortEvent.getColumnElement(getDocument()).addClassName(Style.CURSOR_WAIT);
+						} catch (ElementNotFound e) {
+						}
 						int columnToSort = sortEvent.column;
 						lastSortColumn = columnToSort;
 						final SortAction sortAction = getCachedSortAction(columnToSort);
@@ -93,7 +97,6 @@ public abstract class TableBuilder<T> {
 						currentSortAction.put(columnToSort, nextAction);
 						table.reset();
 						updateView();
-						getContainingElement().removeStyleName(Style.SORTING);
 					}
 				};				
 				sortHandler = table.registerCellHandler(sortListener, OnEvent.onClick);
@@ -101,24 +104,33 @@ public abstract class TableBuilder<T> {
 			return sortHandler;
 		}
 		int columnCount = 0;
+		
 		@Override
-		public GenericElement newHeaderCell(String columnName) {
+		public GenericElement newHeaderCell() {
+			return newHeaderCell(new String[0]);
+		}
+		
+		public GenericElement newHeaderCell(String... styles) {
+			final ArrayList<String> allStyles = new ArrayList<String>();
+			for (String style : styles) {
+				allStyles.add(style);
+			}
 			columnCount++;
-			GenericElement cell = super.newHeaderCell(columnName);
+			GenericElement cell = super.newHeaderCell();
 			SortAction sortAction = getCachedSortAction(columnCount);
 			switch (sortAction) {
 			case Ascending:
-				cell.setStyle(columnCount == lastSortColumn ? Style.SORT_DESCENDING : Style.SORT_ASCENDING_GREY);
+				allStyles.add(columnCount == lastSortColumn ? Style.SORT_DESCENDING : Style.SORT_ASCENDING_GREY);
 				cell.addHandler(getSortListener(), null, columnCount);
 				break;
 			case Descending:
-				cell.setStyle(columnCount == lastSortColumn ? Style.SORT_ASCENDING : Style.SORT_DESCENDING_GREY);
+				allStyles.add(columnCount == lastSortColumn ? Style.SORT_ASCENDING : Style.SORT_DESCENDING_GREY);
 				cell.addHandler(getSortListener(), null, columnCount);
 				break;
 			default:
 				break;
 			}
-			cell.addContents(columnName);
+			cell.setStyle(allStyles.toArray(new String[allStyles.size()]));
 			return cell;
 		}
 	}
@@ -230,6 +242,10 @@ public abstract class TableBuilder<T> {
 			thead.setContentsRaw(b.toString());
 			thead.cleanup();
 		}
+	}
+
+	private Document getDocument() {
+		return getContainingElement().getElement().getOwnerDocument();
 	}
 
 }
