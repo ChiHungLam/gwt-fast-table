@@ -8,7 +8,7 @@ public class HeaderRow extends HtmlElement {
 	}
 	public GenericElement currentCell = null;
 	
-	public GenericElement newHeaderCell(String columnName) {
+	public GenericElement newHeaderCell() {
 		closeOpeningTag();
 		if (currentCell != null) {
 			currentCell.cleanup();

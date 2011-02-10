@@ -10,5 +10,6 @@ public interface Style {
 	final static String SORT_ASCENDING_GREY = "sortAscendingGrey";
 	final static String SORT_DESCENDING = "sortDescending";
 	final static String SORT_DESCENDING_GREY = "sortDescendingGrey";
-	final static String SORTING = "sorting";
+	final static String CURSOR_WAIT = "cursorWait";
+	final static String CURSOR_POINTER = "cursorPointer";
 }
