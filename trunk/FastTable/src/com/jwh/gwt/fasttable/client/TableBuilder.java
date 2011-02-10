@@ -85,6 +85,7 @@ public abstract class TableBuilder<T> {
 					public void handlerCellEvent(CellEvent<T> sortEvent) {
 						getContainingElement().addStyleName(Style.SORTING);
 						int columnToSort = sortEvent.column;
+						lastSortColumn = columnToSort;
 						final SortAction sortAction = getCachedSortAction(columnToSort);
 						// TODO only need to sort filtered ?
 						sort(allObjects, columnToSort, sortAction);
@@ -107,11 +108,11 @@ public abstract class TableBuilder<T> {
 			SortAction sortAction = getCachedSortAction(columnCount);
 			switch (sortAction) {
 			case Ascending:
-				cell.setStyle(Style.SORT_ASCENDING);
+				cell.setStyle(columnCount == lastSortColumn ? Style.SORT_DESCENDING : Style.SORT_ASCENDING_GREY);
 				cell.addHandler(getSortListener(), null, columnCount);
 				break;
 			case Descending:
-				cell.setStyle(Style.SORT_DESCENDING);
+				cell.setStyle(columnCount == lastSortColumn ? Style.SORT_ASCENDING : Style.SORT_DESCENDING_GREY);
 				cell.addHandler(getSortListener(), null, columnCount);
 				break;
 			default:
@@ -122,6 +123,8 @@ public abstract class TableBuilder<T> {
 		}
 	}
 
+	int lastSortColumn = 0;
+	
 	/**
 	 * Implement this if you want to show column headings (which can be sorted)
 	 * 
