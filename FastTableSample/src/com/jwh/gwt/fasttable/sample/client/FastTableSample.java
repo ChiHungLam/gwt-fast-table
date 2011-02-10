@@ -62,21 +62,21 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 
 			public void buildHeader(
 					TableBuilder<SampleModel>.SortableHeaderRow headerRow) {
-				headerRow.newHeaderCell(COLUMN_NAME);
-				headerRow.newHeaderCell(COLUMN_STREET);
-				headerRow.newHeaderCell(COLUMN_CITY);
-				headerRow.newHeaderCell(COLUMN_STATE);
-				headerRow.newHeaderCell(COLUMN_ZIP);
+				headerRow.newHeaderCell().addContents(COLUMN_NAME);
+				headerRow.newHeaderCell(BORDER).addContents(COLUMN_STREET);
+				headerRow.newHeaderCell().addContents(COLUMN_CITY);
+				headerRow.newHeaderCell(BORDER).addContents(COLUMN_STATE);
+				headerRow.newHeaderCell().addContents(COLUMN_ZIP);
 			}
 
 			@Override
 			protected void populateRowCells(SampleModel t, Row row, String refId) {
-				row.newCell().setStyle(NAME)
+				row.newCell().setStyle(NAME, CURSOR_POINTER)
 						.addHandler(getCellHandler(), refId, 1).addContents(t.name);
 				row.newCell().setStyle(BORDER_OPEN_RIGHT).addContents(t.street);
 				row.newCell().setStyle(BORDER_OPEN_LEFT_RIGHT).addContents(t.city);
 				row.newCell().setStyle(BORDER_OPEN_LEFT).addContents(t.state);
-				row.newCell().setStyle(BORDER)
+				row.newCell().setStyle(BORDER, CURSOR_POINTER)
 						.addHandler(getCellHandler(), refId, 5).addContents(t.zip);
 			}
 
