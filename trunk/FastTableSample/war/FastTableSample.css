@@ -34,26 +34,30 @@ tr {
 thead {
 	background: #9cf;
 	text-align: center;
+	border: thin black;
 }
 
-.street {
+.borderOpenRight {
 	border-width: thin;
 	border-right-width: 0;
 }
 
-.city {
+.borderOpenLeftRight {
 	border-width: thin;
 	border-left-width: 0;
 	border-right-width: 0;
 }
 
-.state {
+.borderOpenLeft {
 	border-width: thin;
 	border-left-width: 0;
 }
 
-.zip {
+.border {
 	border-width: thin;
+}
+
+.cursorPointer {
 	cursor: pointer;
 }
 

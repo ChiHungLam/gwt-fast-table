@@ -29,6 +29,11 @@ import com.jwh.gwt.fasttable.client.TableBuilder;
 public class FastTableSample implements EntryPoint, SampleStyle {
 
 
+	private static final String COLUMN_NAME = "Name";
+	private static final String COLUMN_ZIP = "Zip";
+	private static final String COLUMN_STATE = "State";
+	private static final String COLUMN_CITY = "City";
+	private static final String COLUMN_STREET = "Street";
 	private RootPanel tablePanel;
 
 	@Override
@@ -48,30 +53,30 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 
 			@Override
 			public void buildFooter(Row row) {
-				row.newCell().addContents(NAME);
-				row.newCell().addContents(STREET);
-				row.newCell().addContents(CITY);
-				row.newCell().addContents(STATE);
-				row.newCell().addContents(ZIP);
+				row.newCell().addContents(COLUMN_NAME);
+				row.newCell().addContents(COLUMN_STREET);
+				row.newCell().addContents(COLUMN_CITY);
+				row.newCell().addContents(COLUMN_STATE);
+				row.newCell().addContents(COLUMN_ZIP);
 			}
 
 			public void buildHeader(
 					TableBuilder<SampleModel>.SortableHeaderRow headerRow) {
-				headerRow.newHeaderCell(NAME);
-				headerRow.newHeaderCell(STREET);
-				headerRow.newHeaderCell(CITY);
-				headerRow.newHeaderCell(STATE);
-				headerRow.newHeaderCell(ZIP);
+				headerRow.newHeaderCell(COLUMN_NAME);
+				headerRow.newHeaderCell(COLUMN_STREET);
+				headerRow.newHeaderCell(COLUMN_CITY);
+				headerRow.newHeaderCell(COLUMN_STATE);
+				headerRow.newHeaderCell(COLUMN_ZIP);
 			}
 
 			@Override
 			protected void populateRowCells(SampleModel t, Row row, String refId) {
 				row.newCell().setStyle(NAME)
 						.addHandler(getCellHandler(), refId, 1).addContents(t.name);
-				row.newCell().setStyle(STREET).addContents(t.street);
-				row.newCell().setStyle(CITY).addContents(t.city);
-				row.newCell().setStyle(STATE).addContents(t.state);
-				row.newCell().setStyle(ZIP)
+				row.newCell().setStyle(BORDER_OPEN_RIGHT).addContents(t.street);
+				row.newCell().setStyle(BORDER_OPEN_LEFT_RIGHT).addContents(t.city);
+				row.newCell().setStyle(BORDER_OPEN_LEFT).addContents(t.state);
+				row.newCell().setStyle(BORDER)
 						.addHandler(getCellHandler(), refId, 5).addContents(t.zip);
 			}
 

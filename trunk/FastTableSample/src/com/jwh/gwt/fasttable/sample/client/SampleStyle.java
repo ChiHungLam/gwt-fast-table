@@ -15,11 +15,6 @@ import com.jwh.gwt.fasttable.client.Style;
  */
 public interface SampleStyle extends Style {
 
-	final static String CITY = "City";
 	final static String NAME = "Name";
-	final static String STATE = "State";
-	final static String STREET = "Street";
-	final static String ZIP = "Zip";
-	final static String HIGHLIGHT = "highlight";
 	
 }

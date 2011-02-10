@@ -18,18 +18,18 @@ public class TableBuilderTest implements SampleStyle {
 			@Override
 			public void buildFooter(Row row) {
 				row.newCell().addContents(NAME);
-				row.newCell().addContents(STREET);
-				row.newCell().addContents(CITY);
-				row.newCell().addContents(STATE);
-				row.newCell().addContents(ZIP);
+				row.newCell().addContents(BORDER_OPEN_RIGHT);
+				row.newCell().addContents(BORDER_OPEN_LEFT_RIGHT);
+				row.newCell().addContents(BORDER_OPEN_LEFT);
+				row.newCell().addContents(BORDER);
 			}
 			
 			public void buildHeader(TableBuilder<SampleModel>.SortableHeaderRow headerRow) {
 				headerRow.newHeaderCell(NAME);
-				headerRow.newHeaderCell(STREET);
-				headerRow.newHeaderCell(CITY);
-				headerRow.newHeaderCell(STATE);
-				headerRow.newHeaderCell(ZIP);
+				headerRow.newHeaderCell(BORDER_OPEN_RIGHT);
+				headerRow.newHeaderCell(BORDER_OPEN_LEFT_RIGHT);
+				headerRow.newHeaderCell(BORDER_OPEN_LEFT);
+				headerRow.newHeaderCell(BORDER);
 			}
 			
 			@Override
@@ -37,10 +37,10 @@ public class TableBuilderTest implements SampleStyle {
 				CellListener<SampleModel> listener = buildCellListener();
 //				CellHandlerWrapper<SampleModel> wrapper = table.registerCellHandler(listener, OnEvent.onMouseOver, OnEvent.onMouseOut);
 				row.newCell().setStyle(NAME).addContents(t.name); //.addHandler(wrapper, refId, 0);
-				row.newCell().setStyle(STREET).addContents(t.street);
-				row.newCell().setStyle(CITY).addContents(t.city);
-				row.newCell().setStyle(STATE).addContents(t.state);
-				row.newCell().setStyle(ZIP).addContents(t.zip); // .addHandler(wrapper, refId, 0);				
+				row.newCell().setStyle(BORDER_OPEN_RIGHT).addContents(t.street);
+				row.newCell().setStyle(BORDER_OPEN_LEFT_RIGHT).addContents(t.city);
+				row.newCell().setStyle(BORDER_OPEN_LEFT).addContents(t.state);
+				row.newCell().setStyle(BORDER).addContents(t.zip); // .addHandler(wrapper, refId, 0);				
 			}
 
 			private CellListener<SampleModel> buildCellListener() {
