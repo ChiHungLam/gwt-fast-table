@@ -223,7 +223,8 @@ public abstract class TableBuilder<T> {
 	private void buildRows() {
 		final GenericElement tbody = GenericElement.getTableBody(table.builder);
 		// TODO test code: API to set height
-		tbody.setStyle("TABLE_500");
+//		This works only in Firefox
+//		tbody.setStyle("TABLE_500");
 		tbody.closeOpeningTag();
 		for (final T t : filteredObjects) {
 			final Row row = table.newRow();
