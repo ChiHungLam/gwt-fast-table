@@ -2,7 +2,6 @@ package com.jwh.gwt.fasttable.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
@@ -12,72 +11,15 @@ import com.jwh.gwt.fasttable.client.element.GenericElement;
 import com.jwh.gwt.fasttable.client.element.HeaderRow;
 import com.jwh.gwt.fasttable.client.element.Row;
 import com.jwh.gwt.fasttable.client.element.Table;
+import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
+import com.jwh.gwt.fasttable.client.selection.SelectionListener;
+import com.jwh.gwt.fasttable.client.selection.SelectionTracker;
 
 public abstract class TableBuilder<T> {
 
 	enum Position {
 		First, Last, Sorted
-	}
-
-	public class SelectionManager {
-		final HashSet<T> selections = new HashSet<T>();
-
-		/**
-		 * @return all selections
-		 */
-		public HashSet<T> getSelections() {
-			return selections;
-		}
-
-		/**
-		 * @param object
-		 * @return true if the item is newly added
-		 */
-		public boolean select(T object) {
-			return selections.add(object);
-		}
-
-		/**
-		 * Use for single selection. Select an object, unselect any current
-		 * selection (unless it is the object)
-		 * 
-		 * @param object
-		 *            To be selected
-		 * @return any existing selection, or null if none
-		 */
-		public T singleSelection(T object) {
-			T existing = null;
-			if (!selections.isEmpty()) {
-				existing = new ArrayList<T>(selections).get(0);
-			}
-			unselect(existing);
-			select(object);
-			return existing;
-		}
-
-		/**
-		 * Useful for multiple selection. Select an object, or unselect if
-		 * already selected.
-		 * 
-		 * @param object
-		 * @return true if newly selected, false if unselected
-		 */
-		public boolean toggleSelection(T object) {
-			final boolean removed = unselect(object);
-			if (!removed) {
-				select(object);
-			}
-			return !removed;
-		}
-
-		/**
-		 * @param object
-		 * @return true if the item was removed
-		 */
-		public boolean unselect(T object) {
-			return selections.remove(object);
-		}
 	}
 
 	/**
@@ -110,7 +52,7 @@ public abstract class TableBuilder<T> {
 								: SortAction.Ascending;
 						currentSortAction.put(columnToSort, nextAction);
 						table.reset();
-						getSelectionManager().getSelections().clear();
+						getSelectionTracker().getSelections().clear();
 						updateView();
 					}
 				};
@@ -166,7 +108,7 @@ public abstract class TableBuilder<T> {
 	ArrayList<T> filteredObjects = new ArrayList<T>();
 	int lastSortColumn = 0;
 
-	final SelectionManager selectionManager = new SelectionManager();
+	final SelectionTracker<T> selectionTracker = new SelectionTracker<T>();
 
 	public Table<T> table = new Table<T>();
 
@@ -223,8 +165,8 @@ public abstract class TableBuilder<T> {
 	private void buildRows() {
 		final GenericElement tbody = GenericElement.getTableBody(table.builder);
 		// TODO test code: API to set height
-//		This works only in Firefox
-//		tbody.setStyle("TABLE_500");
+		// This works only in Firefox
+		// tbody.setStyle("TABLE_500");
 		tbody.closeOpeningTag();
 		for (final T t : filteredObjects) {
 			final Row row = table.newRow();
@@ -309,8 +251,8 @@ public abstract class TableBuilder<T> {
 		return html;
 	}
 
-	public SelectionManager getSelectionManager() {
-		return selectionManager;
+	public SelectionTracker<T> getSelectionTracker() {
+		return selectionTracker;
 	}
 
 	/**
@@ -357,21 +299,28 @@ public abstract class TableBuilder<T> {
 	 * 
 	 * @param columnElement
 	 * @param domainObject
+	 * @param listener
+	 *            TODO
 	 * @return the previous selection, or null if none
+	 * @throws AbortOperation
 	 */
-	public T singleSelection(Element columnElement, T domainObject) {
-		final T existing = getSelectionManager().singleSelection(domainObject);
-		columnElement.removeClassName(Style.UNSELECTED);
-		columnElement.addClassName(Style.SELECTED);
-		if (existing != null && existing != domainObject) {
-			try {
-				final Element existingCell = findRowElement(existing).getFirstChildElement();
-				existingCell.removeClassName(Style.SELECTED);
-				existingCell.addClassName(Style.UNSELECTED);
-			} catch (final NotFound e) {
+	public void singleSelect(final Element columnElement, final T domainObject,
+			SelectionListener<T> listener) throws AbortOperation {
+		final SelectionListener<T> selectionListener = new SelectionListener<T>() {
+			public void select(T object) {
+				columnElement.removeClassName(Style.UNSELECTED);
+				columnElement.addClassName(Style.SELECTED);
 			}
-		}
-		return existing;
+			public void unselect(T object) {
+				try {
+					final Element existingCell = findRowElement(object).getFirstChildElement();
+					existingCell.removeClassName(Style.SELECTED);
+					existingCell.addClassName(Style.UNSELECTED);
+				} catch (NotFound e) {
+				}
+			};
+		};
+		getSelectionTracker().singleSelect(domainObject, selectionListener.append(listener));
 	}
 
 	/**
@@ -393,17 +342,24 @@ public abstract class TableBuilder<T> {
 	 * 
 	 * @param columnElement
 	 * @param domainObject
-	 * 
+	 * @param listener
+	 *            TODO
 	 * @return
+	 * @throws AbortOperation
 	 */
-	public boolean toggleSelection(Element columnElement, T domainObject) {
-		final boolean newlySelected = getSelectionManager().toggleSelection(domainObject);
-		if (newlySelected) {
-			columnElement.replaceClassName(Style.UNSELECTED, Style.SELECTED);
-		} else {
-			columnElement.replaceClassName(Style.SELECTED, Style.UNSELECTED);
-		}
-		return newlySelected;
+	public void multiSelect(final Element columnElement, final T domainObject,
+			SelectionListener<T> listener) throws AbortOperation {
+		final SelectionListener<T> selectionListener = new SelectionListener<T>() {
+
+			public void select(T object) {
+				columnElement.replaceClassName(Style.UNSELECTED, Style.SELECTED);
+			};
+
+			public void unselect(T object) {
+				columnElement.replaceClassName(Style.SELECTED, Style.UNSELECTED);
+			};
+		};
+		getSelectionTracker().multiSelect(domainObject, selectionListener.append(listener));
 	}
 
 	public void updateView() {
