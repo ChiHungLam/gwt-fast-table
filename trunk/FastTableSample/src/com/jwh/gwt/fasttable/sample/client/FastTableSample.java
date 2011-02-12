@@ -13,8 +13,13 @@ import java.util.Collections;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -29,6 +34,7 @@ import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
 import com.jwh.gwt.fasttable.client.util.LabelValueUtil;
+import com.jwh.gwt.fasttable.client.util.Style;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -76,7 +82,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 					try {
 						final Element rowElement = event.getRowElement(document);
 						final Element columnElement = rowElement.getFirstChildElement();
-						// Test multi vs single select by changing this flag 
+						// Test multi vs single select by changing this flag
 						boolean isMultiSelect = true;
 						isMultiSelect = false;
 						if (isMultiSelect) {
@@ -123,6 +129,8 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				try {
 					LabelValueUtil util = new LabelValueUtil();
 					util.labelValue("Name", d.name);
+					util.prepareAttribute("rowspan", "2");
+					final String buttonId = util.button("OK");
 					util.newRow();
 					util.labelValue("Street", d.street);
 					util.newRow();
@@ -132,24 +140,30 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 					util.newRow();
 					final String html = util.toHtml();
 					td.setInnerHTML(html);
+					final Element okButton = document.getElementById(buttonId);
+					DOM.setEventListener((com.google.gwt.user.client.Element) okButton, new EventListener() {
+						@Override
+						public void onBrowserEvent(Event event) {
+							System.out.println(event.getTypeInt());
+							switch (event.getTypeInt()) {
+							case Event.ONMOUSEDOWN:
+								Window.alert("This demonstrates how to attach events to content created with setInnerHtml()");
+								break;
+							case Event.ONMOUSEOVER:
+								okButton.addClassName(Style.BUTTON_OVER);
+								break;
+							case Event.ONMOUSEOUT:
+								okButton.removeClassName(Style.BUTTON_OVER);
+								break;
+							default:
+								break;
+							}
+						}
+					});
+					DOM.sinkEvents((com.google.gwt.user.client.Element) okButton, Event.ONMOUSEOUT
+							| Event.ONMOUSEDOWN | Event.ONMOUSEOVER);
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
-				
-//				final VerticalPanel v = new VerticalPanel();
-//				td.appendChild(v.getElement());
-//				final Label name = new Label("Name: " + d.name);
-//				name.addStyleName(BORDER_NONE);
-//				v.add(name);
-//				final Label street = new Label("Street: " + d.street);
-//				street.addStyleName(BORDER_NONE);
-//				v.add(street);
-//				final Label city = new Label("City/State: " + d.city + ", " + d.state);
-//				city.addStyleName(BORDER_NONE);
-//				v.add(city);
-//				final Label zip = new Label("Zip: " + d.zip);
-//				zip.addStyleName(BORDER_NONE);
-//				v.add(zip);
 			}
 		};
 	}

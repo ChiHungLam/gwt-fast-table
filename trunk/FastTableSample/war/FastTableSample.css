@@ -154,19 +154,26 @@ tfoot {
 .button {
 	display: block;
 	background-color: transparent;
-	font-weight: bolder;
-	font-size: larger;
+	font-weight: normal;
+	font-size: smaller;
 	background-image: url("icons/button_blue.gif");
+	background-size: cover;
 	background-repeat: no-repeat;
+	background-position: center;
 	margin: 5px auto;
-	padding: 5px 0 0 0;
+	padding-left: 2em;
+	padding-right: 2em;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
 	text-align: center;
+	cursor: pointer;
 }
 
 .buttonDisable {
 	border-style: outset;
 	color: gray;
 	background-image: url("icons/button_gray.gif");
+	cursor: default;
 }
 
 .buttonOver {
