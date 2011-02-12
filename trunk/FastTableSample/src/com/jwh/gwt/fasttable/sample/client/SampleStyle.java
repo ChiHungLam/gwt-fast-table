@@ -10,11 +10,10 @@ package com.jwh.gwt.fasttable.sample.client;
 import com.jwh.gwt.fasttable.client.Style;
 
 /**
- * @author jheyne
- * Constants corresponding to entries in the CSS file
+ * @author jheyne Constants corresponding to entries in the CSS file
  */
 public interface SampleStyle extends Style {
 
 	final static String NAME = "Name";
-	
+
 }

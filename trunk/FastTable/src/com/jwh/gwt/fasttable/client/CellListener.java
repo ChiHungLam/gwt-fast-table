@@ -8,9 +8,9 @@
 package com.jwh.gwt.fasttable.client;
 
 /**
- * @author jheyne
- * Serves as a callback handler for events
- * @param <T> The class of the model object shown in a table
+ * @author jheyne Serves as a callback handler for events
+ * @param <T>
+ *            The class of the model object shown in a table
  */
 public interface CellListener<T> {
 

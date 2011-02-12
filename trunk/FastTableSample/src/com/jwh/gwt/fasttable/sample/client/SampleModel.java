@@ -12,21 +12,18 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.Random;
 
 /**
- * @author jheyne
- * A simple model object which can be randomly configured
+ * @author jheyne A simple model object which can be randomly configured
  */
 public class SampleModel {
 
-	static final String[] cities = new String[] { "Fresno", "Chicago",
-			"Fort Wayne", "Wilmington", "Fort Meyers" };
+	static final String[] cities = new String[] { "Fresno", "Chicago", "Fort Wayne", "Wilmington",
+			"Fort Meyers" };
 
-	static final String[] names = new String[] { "Jim", "Katie", "Linda",
-			"Rebecca", "John" };
+	static final String[] names = new String[] { "Jim", "Katie", "Linda", "Rebecca", "John" };
 	static final String[] states = new String[] { "CA", "IA", "FL", "LA", "NY" };
-	static final String[] streets = new String[] { "360 Green St", "15 Oak St",
-			"645 Cherry St", "421 30th St", "8907 Valley Rd" };
-	static final String[] zips = new String[] { "67887", "34523", "89643",
-			"07885", "5655" };
+	static final String[] streets = new String[] { "360 Green St", "15 Oak St", "645 Cherry St",
+			"421 30th St", "8907 Valley Rd" };
+	static final String[] zips = new String[] { "67887", "34523", "89643", "07885", "5655" };
 
 	public static ArrayList<SampleModel> getSamples(int count) {
 		final ArrayList<SampleModel> answer = new ArrayList<SampleModel>();
@@ -58,10 +55,8 @@ public class SampleModel {
 		this.state = randomSample(states);
 		this.zip = randomSample(zips);
 	}
-	
 
-	public SampleModel(String name, String street, String city, String state,
-			String zip) {
+	public SampleModel(String name, String street, String city, String state, String zip) {
 		super();
 		this.city = city;
 		this.name = name;
@@ -70,9 +65,9 @@ public class SampleModel {
 		this.zip = zip;
 	}
 
-
 	/**
-	 * @param samples Options available
+	 * @param samples
+	 *            Options available
 	 * @return A random selection of one of the options
 	 */
 	private String randomSample(String[] samples) {
