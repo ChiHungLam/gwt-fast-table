@@ -12,7 +12,10 @@ public class GenericElement extends HtmlElement {
 		return new GenericElement("thead", builder);
 	}
 	public static GenericElement getTableBody(StringBuilder builder) {
-		return new GenericElement("tbody", builder);
+		final GenericElement tbody = new GenericElement("tbody", builder);
+		// configure for locked header
+		tbody.addAttribute("style", "overflow:auto;");
+		return tbody;
 	}
 	public static GenericElement getTableFooter(StringBuilder builder) {
 		return new GenericElement("tfoot", builder);
