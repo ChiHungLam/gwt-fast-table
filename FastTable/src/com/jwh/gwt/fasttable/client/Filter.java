@@ -2,6 +2,7 @@ package com.jwh.gwt.fasttable.client;
 
 /**
  * Tests whether a domain model should be shown in the table
+ * 
  * @author jheyne
  * @param <T>
  *            Class of domain objects in a table

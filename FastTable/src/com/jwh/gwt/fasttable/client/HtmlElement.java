@@ -35,13 +35,6 @@ public abstract class HtmlElement {
 		writeOpeningTag();
 	}
 
-	protected void writeOpeningTag() {
-		this.builder.append('<');
-		this.builder.append(getTag());
-		this.builder.append(' ');
-	}
-
-	
 	public HtmlElement(StringBuilder builder, String tag) {
 		super();
 		this.builder = builder;
@@ -60,8 +53,7 @@ public abstract class HtmlElement {
 	 * @return The receiver
 	 */
 	public HtmlElement addAttribute(String key, String value) {
-		assert isAppropriate(State.StartTag) : "attributes should be added before "
-				+ currentState;
+		assert isAppropriate(State.StartTag) : "attributes should be added before " + currentState;
 		builder.append(key);
 		builder.append("=\"");
 		builder.append(value);
@@ -78,8 +70,7 @@ public abstract class HtmlElement {
 	 * @return The receiver
 	 */
 	public HtmlElement addContents(String contents) {
-		assert isAppropriate(State.Contents) : "contents should be set before "
-				+ currentState;
+		assert isAppropriate(State.Contents) : "contents should be set before " + currentState;
 		if (currentState != State.Contents) {
 			builder.append('>');
 		}
@@ -89,19 +80,6 @@ public abstract class HtmlElement {
 		}
 		return this;
 	}
-	
-	public HtmlElement closeOpeningTag() {
-		return addContents(null);
-	}
-
-	public HtmlElement setContentsRaw(String contents) {
-		closeOpeningTag();
-		if (contents != null) {
-			builder.append(contents);
-		}
-		return this;
-	}
-	
 
 	/**
 	 * @param wrapper
@@ -109,14 +87,13 @@ public abstract class HtmlElement {
 	 *            event occurs
 	 * @param objectId
 	 *            Identifier for the domain model instance
-	 * @param columnIndex One-based. First column is 1.
+	 * @param columnIndex
+	 *            One-based. First column is 1.
 	 * @return
 	 */
-	public HtmlElement addHandler(CellHandlerWrapper<?> wrapper, String objectId,
-			int columnIndex) {
-		assert isAppropriate(State.StartTag) : "attributes should be added before "
-				+ currentState;
-		for (OnEvent onEvent : wrapper.onEvents) {
+	public HtmlElement addHandler(CellHandlerWrapper<?> wrapper, String objectId, int columnIndex) {
+		assert isAppropriate(State.StartTag) : "attributes should be added before " + currentState;
+		for (final OnEvent onEvent : wrapper.onEvents) {
 			builder.append(onEvent.name());
 			builder.append("=\"window.fctn");
 			builder.append(wrapper.functionId);
@@ -146,6 +123,10 @@ public abstract class HtmlElement {
 		currentState = State.EndTag;
 	}
 
+	public HtmlElement closeOpeningTag() {
+		return addContents(null);
+	}
+
 	/**
 	 * @return The element's HTML tag
 	 */
@@ -161,8 +142,17 @@ public abstract class HtmlElement {
 		return currentState.compareTo(state) <= 0;
 	}
 
+	public HtmlElement setContentsRaw(String contents) {
+		closeOpeningTag();
+		if (contents != null) {
+			builder.append(contents);
+		}
+		return this;
+	}
+
 	/**
 	 * Set the id attribute
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -172,13 +162,14 @@ public abstract class HtmlElement {
 	}
 
 	/**
-	 * Define a single style. Mutually exclusive with @see Element.setStyles. 
-	 * @param style The class attribute
+	 * Define a single style. Mutually exclusive with @see Element.setStyles.
+	 * 
+	 * @param style
+	 *            The class attribute
 	 * @return The receiver
 	 */
 	public HtmlElement setStyle(String... styles) {
-		assert isAppropriate(State.StartTag) : "style should be set before "
-				+ currentState;
+		assert isAppropriate(State.StartTag) : "style should be set before " + currentState;
 		if (styles.length > 0) {
 			builder.append("class=\"");
 			for (final String style : styles) {
@@ -189,6 +180,12 @@ public abstract class HtmlElement {
 			builder.append("\" ");
 		}
 		return this;
+	}
+
+	protected void writeOpeningTag() {
+		this.builder.append('<');
+		this.builder.append(getTag());
+		this.builder.append(' ');
 	}
 
 }

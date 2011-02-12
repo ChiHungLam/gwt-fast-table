@@ -1,26 +1,11 @@
 package com.jwh.gwt.fasttable.client;
 
-
 public class HeaderRow extends HtmlElement {
+
+	public GenericElement currentCell = null;
 
 	public HeaderRow(StringBuilder builder) {
 		super(builder);
-	}
-	public GenericElement currentCell = null;
-	
-	public GenericElement newHeaderCell() {
-		closeOpeningTag();
-		if (currentCell != null) {
-			currentCell.cleanup();
-		}
-		final GenericElement headerCell = GenericElement.getHeaderCell(builder);
-		currentCell = headerCell;
-		return headerCell;
-	}
-	
-	@Override
-	public String getTag() {
-		return "tr";
 	}
 
 	@Override
@@ -30,5 +15,20 @@ public class HeaderRow extends HtmlElement {
 			currentCell.cleanup();
 		}
 		super.cleanup();
+	}
+
+	@Override
+	public String getTag() {
+		return "tr";
+	}
+
+	public GenericElement newHeaderCell() {
+		closeOpeningTag();
+		if (currentCell != null) {
+			currentCell.cleanup();
+		}
+		final GenericElement headerCell = GenericElement.getHeaderCell(builder);
+		currentCell = headerCell;
+		return headerCell;
 	}
 }

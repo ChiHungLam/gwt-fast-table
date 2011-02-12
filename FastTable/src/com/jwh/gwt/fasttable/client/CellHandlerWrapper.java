@@ -40,7 +40,7 @@ public class CellHandlerWrapper<T> {
 	public CellHandlerWrapper(CellListener<T> cellListener, OnEvent... onEvents) {
 		this.id = currentId++;
 		this.cellListener = cellListener;
-		for (OnEvent event : onEvents) {
+		for (final OnEvent event : onEvents) {
 			this.onEvents.add(event);
 		}
 
