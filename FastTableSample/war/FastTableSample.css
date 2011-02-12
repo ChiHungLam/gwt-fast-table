@@ -70,9 +70,8 @@ tfoot {
 	border-style: inset;
 }
 
-.noborder {
-	border-width: thin;
-	border-style: hidden;
+.borderNone {
+	border-color: transparent;
 }
 
 .cursorPointer {
@@ -131,4 +130,53 @@ tfoot {
 	background-image: url("icons/unselected.gif");
 	background-repeat: no-repeat;
 	background-position: 2px;
+}
+
+.label {
+	color: #3399FF;
+	font-size: smaller;
+	text-align: right;
+	vertical-align: top;
+}
+
+.valueReadOnly {
+	font-weight: bolder;
+}
+
+.valueEdit {
+	
+}
+
+.validationError {
+	background-color: #FF99CC;
+}
+
+.button {
+	display: block;
+	background-color: transparent;
+	font-weight: bolder;
+	font-size: larger;
+	background-image: url("icons/button_blue.gif");
+	background-repeat: no-repeat;
+	margin: 5px auto;
+	padding: 5px 0 0 0;
+	text-align: center;
+}
+
+.buttonDisable {
+	border-style: outset;
+	color: gray;
+	background-image: url("icons/button_gray.gif");
+}
+
+.buttonOver {
+	background-image: url("icons/button_yellow.gif");
+}
+
+.notDisplayed {
+	display: none;
+}
+
+.notVisible {
+	visibility: hidden;
 }
