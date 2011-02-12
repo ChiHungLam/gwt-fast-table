@@ -9,6 +9,10 @@
 	cursor: pointer;
 }
 
+body {
+	font-family: Verdana;
+}
+
 table {
 	border-collapse: collapse;
 	border-width: medium;
@@ -19,6 +23,7 @@ table {
 }
 
 td {
+	padding-top: 1px;
 	padding-left: 1em;
 	padding-right: 1em;
 	border-color: black;
@@ -33,6 +38,12 @@ tr {
 
 thead {
 	background: #9cf;
+	text-align: center;
+	border: thin black;
+}
+
+tfoot {
+	background: #CCCCFF;
 	text-align: center;
 	border: thin black;
 }
@@ -64,7 +75,7 @@ thead {
 }
 
 .highlight {
-	background-color: yellow;
+	background-color: #FFFF99;
 }
 
 .sortAscending {
@@ -101,4 +112,22 @@ thead {
 
 .cursorWait {
 	cursor: wait;
+}
+
+.TABLE_500 {
+	height: 500px;
+}
+
+.selected {
+	padding-left: 20px;
+	background-image: url("icons/selected.gif");
+	background-repeat: no-repeat;
+	background-position: 2px;
+}
+
+.unselected {
+	padding-left: 20px;
+	background-image: url("icons/unselected.gif");
+	background-repeat: no-repeat;
+	background-position: 2px;
 }
