@@ -25,17 +25,17 @@ public class CellHandlerWrapper<T> {
 	/**
 	 * @see CellListener
 	 */
-	final CellListener<T> cellListener;
+	public final CellListener<T> cellListener;
 
 	/**
 	 * Unique identifier
 	 */
-	final Integer id;
+	public final Integer id;
 	/**
 	 * All the events for which the handler applies
 	 */
 	public final ArrayList<OnEvent> onEvents = new ArrayList<OnEvent>();
-	int functionId;
+	public int functionId;
 
 	public CellHandlerWrapper(CellListener<T> cellListener, OnEvent... onEvents) {
 		this.id = currentId++;
