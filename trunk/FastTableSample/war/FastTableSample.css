@@ -23,6 +23,7 @@ table {
 
 td {
 	padding-top: 1px;
+	padding-bottom: 1px;
 	padding-left: 1em;
 	padding-right: 1em;
 	border-color: black;
@@ -116,10 +117,6 @@ tfoot {
 
 .cursorWait {
 	cursor: wait;
-}
-
-.TABLE_500 {
-	height: 500px;
 }
 
 .selected {
