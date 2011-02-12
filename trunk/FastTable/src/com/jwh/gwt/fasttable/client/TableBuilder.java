@@ -15,6 +15,7 @@ import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
 import com.jwh.gwt.fasttable.client.selection.SelectionTracker;
+import com.jwh.gwt.fasttable.client.util.Style;
 
 public abstract class TableBuilder<T> {
 

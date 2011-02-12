@@ -22,5 +22,10 @@ public class Cell extends HtmlElement {
 	public String getTag() {
 		return "td";
 	}
+	
+	public GenericElement newLabel() {
+		closeOpeningTag();
+		return GenericElement.getLabel(builder);
+	}
 
 }

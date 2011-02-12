@@ -37,4 +37,8 @@ public class GenericElement extends HtmlElement {
 		return tag;
 	}
 
+	public static GenericElement getLabel(StringBuilder builder) {
+		return new GenericElement("label", builder);
+	}
+
 }
