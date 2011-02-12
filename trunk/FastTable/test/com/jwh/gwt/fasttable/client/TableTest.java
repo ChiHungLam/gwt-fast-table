@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.google.gwt.dev.util.collect.HashSet;
+import com.jwh.gwt.fasttable.client.element.Table;
 
 public class TableTest {
 

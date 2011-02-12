@@ -25,7 +25,9 @@ import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.TableBuilder;
 import com.jwh.gwt.fasttable.client.element.Row;
+import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
+import com.jwh.gwt.fasttable.client.selection.SelectionListener;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -43,23 +45,44 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 	private CellListener<SampleModel> buildCellListener() {
 		return new CellListener<SampleModel>() {
 
+			/**
+			 * @param event
+			 */
 			@Override
-			public void handlerCellEvent(CellEvent<SampleModel> event) {
+			public void handlerCellEvent(final CellEvent<SampleModel> event) {
 				final Document document = tablePanel.getElement().getOwnerDocument();
 				switch (event.getOnEvent()) {
 				case onClick:
+					SelectionListener<SampleModel> listener = new SelectionListener<SampleModel>() {
+						@Override
+						public void select(SampleModel object) {
+							try {
+								showDetailPanel(event, document);
+							} catch (NotFound e) {
+							}
+						}
+
+						@Override
+						public void unselect(SampleModel object) {
+							try {
+								builder.findRowElement(object).getNextSibling().removeFromParent();
+							} catch (NotFound e) {
+							}
+						}
+					};
 					try {
 						final Element rowElement = event.getRowElement(document);
 						final Element columnElement = rowElement.getFirstChildElement();
-						final SampleModel previousSelection = builder.singleSelection(columnElement,
-								event.domainObject);
-						if (previousSelection == null || previousSelection != event.getDomainObject()) {
-							showDetailPanel(event, document);
+						// Test multi vs single select by changing this flag 
+						boolean isMultiSelect = true;
+						isMultiSelect = false;
+						if (isMultiSelect) {
+							builder.multiSelect(columnElement, event.domainObject, listener);
+						} else {
+							builder.singleSelect(columnElement, event.domainObject, listener);
 						}
-						if (previousSelection != null && previousSelection != event.getDomainObject()) {
-							builder.findRowElement(previousSelection).getNextSibling().removeFromParent();
-						}
-					} catch (final NotFound e) {
+					} catch (NotFound e) {
+					} catch (AbortOperation e) {
 					}
 					break;
 				case onMouseOver:
@@ -96,10 +119,18 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				final SampleModel domainObject = event.getDomainObject();
 				final VerticalPanel v = new VerticalPanel();
 				td.appendChild(v.getElement());
-				v.add(new Label("Name: " + domainObject.name));
-				v.add(new Label("Street: " + domainObject.street));
-				v.add(new Label("City/State: " + domainObject.city + ", " + domainObject.state));
-				v.add(new Label("Zip: " + domainObject.zip));
+				final Label name = new Label("Name: " + domainObject.name);
+				name.addStyleName(BORDER_NONE);
+				v.add(name);
+				final Label street = new Label("Street: " + domainObject.street);
+				street.addStyleName(BORDER_NONE);
+				v.add(street);
+				final Label city = new Label("City/State: " + domainObject.city + ", " + domainObject.state);
+				city.addStyleName(BORDER_NONE);
+				v.add(city);
+				final Label zip = new Label("Zip: " + domainObject.zip);
+				zip.addStyleName(BORDER_NONE);
+				v.add(zip);
 			}
 		};
 	}
