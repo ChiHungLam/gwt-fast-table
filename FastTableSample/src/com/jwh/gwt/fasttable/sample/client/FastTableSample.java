@@ -13,7 +13,6 @@ import java.util.Collections;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.user.client.DOM;
@@ -23,7 +22,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.jwh.gwt.fasttable.client.CellEvent;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
@@ -144,7 +142,6 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 					DOM.setEventListener((com.google.gwt.user.client.Element) okButton, new EventListener() {
 						@Override
 						public void onBrowserEvent(Event event) {
-							System.out.println(event.getTypeInt());
 							switch (event.getTypeInt()) {
 							case Event.ONMOUSEDOWN:
 								Window.alert("This demonstrates how to attach events to content created with setInnerHtml()");
