@@ -8,6 +8,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
+import com.jwh.gwt.fasttable.client.exception.NotFound;
 
 public abstract class TableBuilder<T> {
 
@@ -92,7 +93,7 @@ public abstract class TableBuilder<T> {
 						try {
 							sortEvent.getColumnElement(getDocument())
 									.addClassName(Style.CURSOR_WAIT);
-						} catch (ElementNotFound e) {
+						} catch (NotFound e) {
 						}
 						int columnToSort = sortEvent.column;
 						lastSortColumn = columnToSort;
@@ -399,13 +400,13 @@ public abstract class TableBuilder<T> {
 						.getFirstChildElement();
 				existingCell.removeClassName(Style.SELECTED);
 				existingCell.addClassName(Style.UNSELECTED);
-			} catch (ElementNotFound e) {
+			} catch (NotFound e) {
 			}
 		}
 		return existing;
 	}
 
-	public Element findRowElement(T existing) throws ElementNotFound {
+	public Element findRowElement(T existing) throws NotFound {
 		final String refId = table.getRefId(existing);
 		return getDocument().getElementById(refId);
 	}

@@ -15,21 +15,17 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
-import com.google.gwt.requestfactory.shared.impl.FindRequest;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.jwh.gwt.fasttable.client.CellEvent;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
-import com.jwh.gwt.fasttable.client.ElementNotFound;
 import com.jwh.gwt.fasttable.client.Row;
-import com.jwh.gwt.fasttable.client.Style;
 import com.jwh.gwt.fasttable.client.TableBuilder;
+import com.jwh.gwt.fasttable.client.exception.NotFound;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -134,19 +130,19 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 						if (previousSelection != null && previousSelection != event.getDomainObject()) {
 							builder.findRowElement(previousSelection).getNextSibling().removeFromParent();
 						}
-					} catch (ElementNotFound e) {
+					} catch (NotFound e) {
 					}
 					break;
 				case onMouseOver:
 					try {
 						event.getRowElement(document).addClassName(HIGHLIGHT);
-					} catch (ElementNotFound e1) {
+					} catch (NotFound e1) {
 					}
 					break;
 				case onMouseOut:
 					try {
 						event.getRowElement(document).removeClassName(HIGHLIGHT);
-					} catch (ElementNotFound e1) {
+					} catch (NotFound e1) {
 					}
 					break;
 				default:
@@ -160,10 +156,10 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			 * 
 			 * @param event
 			 * @param document
-			 * @throws ElementNotFound
+			 * @throws NotFound
 			 */
 			private void showDetailPanel(CellEvent<SampleModel> event, final Document document)
-					throws ElementNotFound {
+					throws NotFound {
 				final TableRowElement newRow = event.insertRowAfter(document);
 				final TableCellElement td = document.createTDElement();
 				td.setAttribute("colspan", "5");
