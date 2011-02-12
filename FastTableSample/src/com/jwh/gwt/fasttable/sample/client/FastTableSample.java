@@ -23,8 +23,8 @@ import com.jwh.gwt.fasttable.client.CellEvent;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
-import com.jwh.gwt.fasttable.client.Row;
 import com.jwh.gwt.fasttable.client.TableBuilder;
+import com.jwh.gwt.fasttable.client.element.Row;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 
 /**
