@@ -7,10 +7,12 @@
 
 package com.jwh.gwt.fasttable.sample.client;
 
-import com.jwh.gwt.fasttable.client.Style;
+import com.jwh.gwt.fasttable.client.util.Style;
 
 /**
- * @author jheyne Constants corresponding to entries in the CSS file
+ * Constants corresponding to entries in the CSS file
+ * 
+ * @author jheyne
  */
 public interface SampleStyle extends Style {
 

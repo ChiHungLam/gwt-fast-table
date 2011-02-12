@@ -2,6 +2,13 @@ package com.jwh.gwt.fasttable.sample.client;
 
 import java.util.Comparator;
 
+/**
+ * This is used for sorting the rows. It counts on knowing column is currently
+ * being sorted (the current column is passed in)
+ * 
+ * @author jheyne
+ * 
+ */
 public class SampleModelComparator implements Comparator<SampleModel> {
 
 	final int column;
