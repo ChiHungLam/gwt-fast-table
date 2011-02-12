@@ -5,7 +5,7 @@ package com.jwh.gwt.fasttable.client.exception;
  * 
  * @author jheyne
  */
-public class Abort extends Exception {
+public class AbortOperation extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
