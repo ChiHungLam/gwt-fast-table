@@ -16,7 +16,6 @@ body {
 table {
 	border-collapse: collapse;
 	border-width: medium;
-	margin: 2em;
 	border-style: outset;
 	border-color: gray;
 	border-collapse: collapse;
@@ -68,6 +67,11 @@ tfoot {
 	border-width: thin;
 	border-color: black;
 	border-style: inset;
+}
+
+.noborder {
+	border-width: thin;
+	border-style: hidden;
 }
 
 .cursorPointer {
