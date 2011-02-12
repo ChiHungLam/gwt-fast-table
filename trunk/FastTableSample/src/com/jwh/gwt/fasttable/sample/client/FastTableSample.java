@@ -28,9 +28,12 @@ import com.jwh.gwt.fasttable.client.element.Row;
 import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
+import com.jwh.gwt.fasttable.client.util.LabelValueUtil;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
+ * 
+ * This builds the sample "Fast Table" web page
  */
 public class FastTableSample implements EntryPoint, SampleStyle {
 
@@ -112,25 +115,41 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			 */
 			private void showDetailPanel(CellEvent<SampleModel> event, final Document document)
 					throws NotFound {
+				final SampleModel d = event.getDomainObject();
 				final TableRowElement newRow = event.insertRowAfter(document);
 				final TableCellElement td = document.createTDElement();
 				td.setAttribute("colspan", "5");
 				newRow.appendChild(td);
-				final SampleModel domainObject = event.getDomainObject();
-				final VerticalPanel v = new VerticalPanel();
-				td.appendChild(v.getElement());
-				final Label name = new Label("Name: " + domainObject.name);
-				name.addStyleName(BORDER_NONE);
-				v.add(name);
-				final Label street = new Label("Street: " + domainObject.street);
-				street.addStyleName(BORDER_NONE);
-				v.add(street);
-				final Label city = new Label("City/State: " + domainObject.city + ", " + domainObject.state);
-				city.addStyleName(BORDER_NONE);
-				v.add(city);
-				final Label zip = new Label("Zip: " + domainObject.zip);
-				zip.addStyleName(BORDER_NONE);
-				v.add(zip);
+				try {
+					LabelValueUtil util = new LabelValueUtil();
+					util.labelValue("Name", d.name);
+					util.newRow();
+					util.labelValue("Street", d.street);
+					util.newRow();
+					util.labelValue("City, State ", d.city + ", " + d.state);
+					util.newRow();
+					util.labelValue("Zip", d.zip);
+					util.newRow();
+					final String html = util.toHtml();
+					td.setInnerHTML(html);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+//				final VerticalPanel v = new VerticalPanel();
+//				td.appendChild(v.getElement());
+//				final Label name = new Label("Name: " + d.name);
+//				name.addStyleName(BORDER_NONE);
+//				v.add(name);
+//				final Label street = new Label("Street: " + d.street);
+//				street.addStyleName(BORDER_NONE);
+//				v.add(street);
+//				final Label city = new Label("City/State: " + d.city + ", " + d.state);
+//				city.addStyleName(BORDER_NONE);
+//				v.add(city);
+//				final Label zip = new Label("Zip: " + d.zip);
+//				zip.addStyleName(BORDER_NONE);
+//				v.add(zip);
 			}
 		};
 	}
