@@ -8,14 +8,15 @@ import org.junit.Test;
 
 import com.google.gwt.dev.util.collect.HashSet;
 import com.jwh.gwt.fasttable.client.element.Table;
+import com.jwh.gwt.fasttable.client.util.IdGenerator;
 
-public class TableTest {
+public class IdGeneratorTest {
 
 	@Test
 	public void nextTableId() throws Exception {
 		final ArrayList<String> all = new ArrayList<String>();
 		for (int i = 0; i < 1000; i++) {
-			String id = Table.nextTableId();
+			String id = IdGenerator.getNextId();
 			System.out.println(id);
 			all.add(id);
 		}

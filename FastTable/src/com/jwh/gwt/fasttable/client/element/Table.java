@@ -16,26 +16,13 @@ import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
+import com.jwh.gwt.fasttable.client.util.IdGenerator;
+import com.jwh.gwt.fasttable.client.util.Style;
 
 public class Table<T> extends HtmlElement {
 
-	/**
-	 * In the current design, only 4 cell handlers can be defined per page. This
-	 * keeps track of the current count.
-	 */
+	@Deprecated
 	static int instanceCounter = 1;
-
-	public static String nextTableId() {
-		final String validCharacters = "QWERTYUIOPASDFGHJKLZXCVBNM";
-		final StringBuilder b = new StringBuilder();
-		int current = instanceCounter++;
-		while (current > 0) {
-			final int remainder = current % validCharacters.length();
-			b.append(validCharacters.charAt(remainder));
-			current = current / validCharacters.length();
-		}
-		return b.toString();
-	}
 
 	/**
 	 * Used for generating unique row ids
@@ -67,8 +54,9 @@ public class Table<T> extends HtmlElement {
 
 	public Table() {
 		super(new StringBuilder());
-		this.identifier = nextTableId();
+		this.identifier = IdGenerator.getNextId();
 		setId(getId());
+		setStyle(Style.BORDER_NONE);
 	}
 
 	public void cleanupCurrentRow() {
