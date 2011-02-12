@@ -18,3 +18,6 @@ What is coming:
   * ~~*Embedded Drop Panel*~~ -- Show a drop panel when an item is selected. Demonstrated in the sample app. _*DONE*_
   * *Lock table header when scrolling*
   * *Shorten callback signature* - less is more
+  * *Support for single and multiple select* _*DONE*_
+  * *Drop Down Panel* - Support for drop down panel under selected row _*DONE*_
+  * *Simple table utility*  - for quickly building typical GUI panels  _*Prototype Implementation*_
