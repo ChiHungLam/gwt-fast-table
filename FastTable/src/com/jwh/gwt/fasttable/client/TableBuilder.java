@@ -8,6 +8,10 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
+import com.jwh.gwt.fasttable.client.element.GenericElement;
+import com.jwh.gwt.fasttable.client.element.HeaderRow;
+import com.jwh.gwt.fasttable.client.element.Row;
+import com.jwh.gwt.fasttable.client.element.Table;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 
 public abstract class TableBuilder<T> {
