@@ -12,4 +12,6 @@ public interface Style {
 	final static String SORT_DESCENDING_GREY = "sortDescendingGrey";
 	final static String CURSOR_WAIT = "cursorWait";
 	final static String CURSOR_POINTER = "cursorPointer";
+	static final String SELECTED = "selected";
+	static final String UNSELECTED = "unselected";
 }

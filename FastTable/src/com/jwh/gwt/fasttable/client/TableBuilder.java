@@ -1,12 +1,11 @@
 package com.jwh.gwt.fasttable.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 
@@ -31,8 +30,10 @@ public abstract class TableBuilder<T> {
 	HashMap<Integer, SortAction> currentSortAction = new HashMap<Integer, TableBuilder.SortAction>();
 
 	/**
-	 * We cache the initial sort action, and toggle the action when sort is invoked. 
-	 * @param column 
+	 * We cache the initial sort action, and toggle the action when sort is
+	 * invoked.
+	 * 
+	 * @param column
 	 * @return The sort action to invoke if the column header is clicked
 	 */
 	public SortAction getCachedSortAction(int column) {
@@ -43,7 +44,7 @@ public abstract class TableBuilder<T> {
 		}
 		return sortAction;
 	}
-	
+
 	/**
 	 * Override this if you want some columns to sort when clicked in the
 	 * header. The default does not sort.
@@ -58,7 +59,9 @@ public abstract class TableBuilder<T> {
 
 	/**
 	 * Override to sort a column. The default does nothing.
-	 * @param sortMe TODO
+	 * 
+	 * @param sortMe
+	 *            TODO
 	 * @param column
 	 *            The column to sort
 	 * @param action
@@ -70,7 +73,7 @@ public abstract class TableBuilder<T> {
 
 	ArrayList<T> allObjects = new ArrayList<T>();
 	ArrayList<T> filteredObjects = new ArrayList<T>();
-	
+
 	/**
 	 * Implemented as an inner class so it can have access to sorting services
 	 */
@@ -78,14 +81,17 @@ public abstract class TableBuilder<T> {
 		public SortableHeaderRow(StringBuilder builder) {
 			super(builder);
 		}
+
 		CellHandlerWrapper<T> sortHandler = null;
+
 		public CellHandlerWrapper<T> getSortListener() {
 			if (sortHandler == null) {
 				final CellListener<T> sortListener = new CellListener<T>() {
 					@Override
 					public void handlerCellEvent(CellEvent<T> sortEvent) {
 						try {
-							sortEvent.getColumnElement(getDocument()).addClassName(Style.CURSOR_WAIT);
+							sortEvent.getColumnElement(getDocument())
+									.addClassName(Style.CURSOR_WAIT);
 						} catch (ElementNotFound e) {
 						}
 						int columnToSort = sortEvent.column;
@@ -93,23 +99,27 @@ public abstract class TableBuilder<T> {
 						final SortAction sortAction = getCachedSortAction(columnToSort);
 						// TODO only need to sort filtered ?
 						sort(allObjects, columnToSort, sortAction);
-						final SortAction nextAction = sortAction == SortAction.Ascending ? SortAction.Descending : SortAction.Ascending;
+						final SortAction nextAction = sortAction == SortAction.Ascending ? SortAction.Descending
+								: SortAction.Ascending;
 						currentSortAction.put(columnToSort, nextAction);
 						table.reset();
+						getSelectionManager().getSelections().clear();
 						updateView();
 					}
-				};				
-				sortHandler = table.registerCellHandler(sortListener, OnEvent.onClick);
+				};
+				sortHandler = table.registerCellHandler(sortListener,
+						OnEvent.onClick);
 			}
 			return sortHandler;
 		}
+
 		int columnCount = 0;
-		
+
 		@Override
 		public GenericElement newHeaderCell() {
 			return newHeaderCell(new String[0]);
 		}
-		
+
 		public GenericElement newHeaderCell(String... styles) {
 			final ArrayList<String> allStyles = new ArrayList<String>();
 			for (String style : styles) {
@@ -120,11 +130,15 @@ public abstract class TableBuilder<T> {
 			SortAction sortAction = getCachedSortAction(columnCount);
 			switch (sortAction) {
 			case Ascending:
-				allStyles.add(columnCount == lastSortColumn ? Style.SORT_DESCENDING : Style.SORT_ASCENDING_GREY);
+				allStyles
+						.add(columnCount == lastSortColumn ? Style.SORT_DESCENDING
+								: Style.SORT_ASCENDING_GREY);
 				cell.addHandler(getSortListener(), null, columnCount);
 				break;
 			case Descending:
-				allStyles.add(columnCount == lastSortColumn ? Style.SORT_ASCENDING : Style.SORT_DESCENDING_GREY);
+				allStyles
+						.add(columnCount == lastSortColumn ? Style.SORT_ASCENDING
+								: Style.SORT_DESCENDING_GREY);
 				cell.addHandler(getSortListener(), null, columnCount);
 				break;
 			default:
@@ -136,7 +150,7 @@ public abstract class TableBuilder<T> {
 	}
 
 	int lastSortColumn = 0;
-	
+
 	/**
 	 * Implement this if you want to show column headings (which can be sorted)
 	 * 
@@ -176,15 +190,81 @@ public abstract class TableBuilder<T> {
 		this.allObjects = allObjects;
 	}
 
+	public class SelectionManager {
+		final HashSet<T> selections = new HashSet<T>();
+
+		/**
+		 * Useful for multiple selection. Select an object, or unselect if
+		 * already selected.
+		 * 
+		 * @param object
+		 * @return true if newly selected, false if unselected
+		 */
+		public boolean toggleSelection(T object) {
+			final boolean removed = unselect(object);
+			if (!removed) {
+				select(object);
+			}
+			return !removed;
+		}
+
+		/**
+		 * Use for single selection. Select an object, unselect any current
+		 * selection (unless it is the object)
+		 * 
+		 * @param object
+		 *            To be selected
+		 * @return any existing selection, or null if none
+		 */
+		public T singleSelection(T object) {
+			T existing = null;
+			if (!selections.isEmpty()) {
+				existing = new ArrayList<T>(selections).get(0);
+			}
+			unselect(existing);
+			select(object);
+			return existing;
+		}
+
+		/**
+		 * @return all selections
+		 */
+		public HashSet<T> getSelections() {
+			return selections;
+		}
+
+		/**
+		 * @param object
+		 * @return true if the item is newly added
+		 */
+		public boolean select(T object) {
+			return selections.add(object);
+		}
+
+		/**
+		 * @param object
+		 * @return true if the item was removed
+		 */
+		public boolean unselect(T object) {
+			return selections.remove(object);
+		}
+	}
+
+	final SelectionManager selectionManager = new SelectionManager();
+
+	public SelectionManager getSelectionManager() {
+		return selectionManager;
+	}
+
 	public Table<T> table = new Table<T>();
 
 	public void updateView() {
 		getContainingElement().clear();
 		getContainingElement().getElement().setInnerHTML(getHtml());
 	}
-	
+
 	public abstract Panel getContainingElement();
-	
+
 	public String getHtml() {
 		doFilter();
 		table.reset();
@@ -198,6 +278,8 @@ public abstract class TableBuilder<T> {
 
 	private void buildRows() {
 		GenericElement tbody = GenericElement.getTableBody(table.builder);
+		// TODO test code: API to set height
+		tbody.setStyle("TABLE_500");
 		tbody.closeOpeningTag();
 		for (T t : filteredObjects) {
 			final Row row = table.newRow();
@@ -226,15 +308,24 @@ public abstract class TableBuilder<T> {
 		if (length != b.length()) {
 			headerRow.cleanup();
 			GenericElement tfoot = GenericElement.getTableFooter(table.builder);
+			tfoot.setId(getFooterId());
 			tfoot.setContentsRaw(b.toString());
 			tfoot.cleanup();
 		}
 
 	}
 
+	/**
+	 * @return The footer ID for external DOM manipulation
+	 */
+	public String getFooterId() {
+		return getTableId() + "_footer";
+	}
+
 	private void buildHeaderPrivate() {
 		final StringBuilder b = new StringBuilder();
 		SortableHeaderRow headerRow = new SortableHeaderRow(b);
+		headerRow.setId(getHeaderId());
 		buildHeader(headerRow);
 		if (headerRow.currentCell != null) {
 			headerRow.cleanup();
@@ -244,8 +335,78 @@ public abstract class TableBuilder<T> {
 		}
 	}
 
+	/**
+	 * @return The header id for DOM manipulation
+	 */
+	public String getHeaderId() {
+		return getTableId() + "_Header";
+	}
+
+	public String getTableId() {
+		return table.getId();
+	}
+
 	private Document getDocument() {
 		return getContainingElement().getElement().getOwnerDocument();
 	}
 
+	enum Position {
+		First, Last, Sorted
+	}
+
+	public void add(T domainObject, Position position) {
+		// TODO
+	}
+
+	public void remove(T domainObject) {
+		// TODO
+	}
+
+	/**
+	 * register or unregister the selection, and update CSS selection
+	 * 
+	 * @param columnElement
+	 * @param domainObject
+	 * 
+	 * @return
+	 */
+	public boolean toggleSelection(Element columnElement, T domainObject) {
+		final boolean newlySelected = getSelectionManager().toggleSelection(
+				domainObject);
+		if (newlySelected) {
+			columnElement.replaceClassName(Style.UNSELECTED, Style.SELECTED);
+		} else {
+			columnElement.replaceClassName(Style.SELECTED, Style.UNSELECTED);
+		}
+		return newlySelected;
+	}
+
+	/**
+	 * Use for single selection. Select an object, unselect any current
+	 * selection (unless it is the object)
+	 * 
+	 * @param columnElement
+	 * @param domainObject
+	 * @return the previous selection, or null if none
+	 */
+	public T singleSelection(Element columnElement, T domainObject) {
+		final T existing = getSelectionManager().singleSelection(domainObject);
+		columnElement.removeClassName(Style.UNSELECTED);
+		columnElement.addClassName(Style.SELECTED);
+		if (existing != null && existing != domainObject) {
+			try {
+				final Element existingCell = findRowElement(existing)
+						.getFirstChildElement();
+				existingCell.removeClassName(Style.SELECTED);
+				existingCell.addClassName(Style.UNSELECTED);
+			} catch (ElementNotFound e) {
+			}
+		}
+		return existing;
+	}
+
+	public Element findRowElement(T existing) throws ElementNotFound {
+		final String refId = table.getRefId(existing);
+		return getDocument().getElementById(refId);
+	}
 }

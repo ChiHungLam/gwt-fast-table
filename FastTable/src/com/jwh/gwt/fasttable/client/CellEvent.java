@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.TableRowElement;
 
 public class CellEvent<T> {
 	public enum OnEvent {onClick, onDblClick, onKeyDown, onKeyPress, onKeyUp,onFocus, onBlur, onChange, onMouseDown, onMouseMove, onMouseOut, onMouseOver, onMouseUp, unknown}
@@ -14,7 +15,9 @@ public class CellEvent<T> {
 	public String eventIdentifier;
 	String refId;
 	public T domainObject;
-	
+	public String getRefId() {
+		return refId;
+	}
 	public CellEvent(String eventIdentifier, T domainObject, String refId,
 			int column) {
 		super();
@@ -62,4 +65,10 @@ public class CellEvent<T> {
 	public T getDomainObject() {
 		return domainObject;
 	} 
+	public TableRowElement insertRowAfter(Document document) throws ElementNotFound {
+		Element row = getRowElement(document);
+		TableRowElement newRow = document.createTRElement(); 
+		row.getParentElement().insertAfter(newRow, row);
+		return newRow;
+	}
 }
