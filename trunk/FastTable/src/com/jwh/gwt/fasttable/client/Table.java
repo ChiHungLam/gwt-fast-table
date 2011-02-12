@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
+import com.jwh.gwt.fasttable.client.exception.NotFound;
 
 public class Table<T> extends HtmlElement {
 	
@@ -61,14 +62,14 @@ public class Table<T> extends HtmlElement {
 	 */
 	private final HashMap<String, T> lookup = new HashMap<String, T>();
 
-	public String getRefId(T object) throws ElementNotFound {
+	public String getRefId(T object) throws NotFound {
 		final Set<Entry<String, T>> entrySet = lookup.entrySet();
 		for (Entry<String, T> entry : entrySet) {
 			if (entry.getValue() == object) {
 				return entry.getKey();
 			}
 		}
-		throw new ElementNotFound();
+		throw new NotFound();
 	}
 	public Table() {
 		super(new StringBuilder());

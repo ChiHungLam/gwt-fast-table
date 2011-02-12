@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.TableRowElement;
+import com.jwh.gwt.fasttable.client.exception.NotFound;
 
 public class CellEvent<T> {
 	public enum OnEvent {onClick, onDblClick, onKeyDown, onKeyPress, onKeyUp,onFocus, onBlur, onChange, onMouseDown, onMouseMove, onMouseOut, onMouseOver, onMouseUp, unknown}
@@ -35,14 +36,14 @@ public class CellEvent<T> {
 			return OnEvent.unknown;
 		}
 	}
-	public Element getRowElement(Document document) throws ElementNotFound {
+	public Element getRowElement(Document document) throws NotFound {
 		Element row = document.getElementById(refId);
 		if (row == null) {
-			throw new ElementNotFound();
+			throw new NotFound();
 		}
 		return row;
 	}
-	public ArrayList<Element> getAllColumnElements(Document document) throws ElementNotFound {
+	public ArrayList<Element> getAllColumnElements(Document document) throws NotFound {
 		ArrayList<Element> answer = new ArrayList<Element>();
 		Element rowElement = getRowElement(document);
 		Element currentElement = rowElement.getFirstChildElement();
@@ -51,21 +52,21 @@ public class CellEvent<T> {
 			currentElement = currentElement.getNextSiblingElement();
 		}
 		if (answer.isEmpty()) {
-			throw new ElementNotFound();
+			throw new NotFound();
 		}
 		return answer;
 	}
-	public Element getColumnElement(Document document) throws ElementNotFound {
+	public Element getColumnElement(Document document) throws NotFound {
 		ArrayList<Element> all = getAllColumnElements(document);
 		if (column > all.size()) {
-			throw new ElementNotFound();
+			throw new NotFound();
 		}
 		return all.get(column - 1);
 	}
 	public T getDomainObject() {
 		return domainObject;
 	} 
-	public TableRowElement insertRowAfter(Document document) throws ElementNotFound {
+	public TableRowElement insertRowAfter(Document document) throws NotFound {
 		Element row = getRowElement(document);
 		TableRowElement newRow = document.createTRElement(); 
 		row.getParentElement().insertAfter(newRow, row);
