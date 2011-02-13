@@ -41,6 +41,7 @@ import com.jwh.gwt.fasttable.client.util.Style;
  */
 public class FastTableSample implements EntryPoint, SampleStyle {
 
+	private static final String COLUMN_ID = "ID";
 	private static final String COLUMN_NAME = "Name";
 	private static final String COLUMN_ZIP = "Zip";
 	private static final String COLUMN_STATE = "State";
@@ -122,7 +123,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				final SampleModel d = event.getDomainObject();
 				final TableRowElement newRow = event.insertRowAfter(document);
 				final TableCellElement td = document.createTDElement();
-				td.setAttribute("colspan", "5");
+				td.setAttribute("colspan", "6");
 				newRow.appendChild(td);
 				try {
 					LabelValueUtil util = new LabelValueUtil();
@@ -177,6 +178,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				row.newCell().addContents(COLUMN_CITY);
 				row.newCell().addContents(COLUMN_STATE);
 				row.newCell().addContents(COLUMN_ZIP);
+				row.newCell().addContents(COLUMN_ID);
 			}
 
 			@Override
@@ -186,6 +188,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				headerRow.newHeaderCell().addContents(COLUMN_CITY);
 				headerRow.newHeaderCell(BORDER).addContents(COLUMN_STATE);
 				headerRow.newHeaderCell().addContents(COLUMN_ZIP);
+				headerRow.newHeaderCell(BORDER).addContents(COLUMN_ID);
 			}
 
 			private CellHandlerWrapper<SampleModel> getCellHandler() {
@@ -216,6 +219,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				row.newCell().setStyle(BORDER_OPEN_LEFT).addContents(t.state);
 				row.newCell().setStyle(BORDER, CURSOR_POINTER).addHandler(getCellHandler(), refId, 5)
 						.addContents(t.zip);
+				row.newCell().setStyle(BORDER_OPEN_LEFT).addContents(String.valueOf(t.sequenceNumber));
 			}
 
 			@Override
@@ -226,7 +230,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			}
 
 		};
-		builder.setContents(SampleModel.getSamples(500));
+		builder.setContents(SampleModel.getSamples(1000));
 		builder.updateView();
 	}
 

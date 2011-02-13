@@ -28,7 +28,9 @@ public class SampleModel {
 	public static ArrayList<SampleModel> getSamples(int count) {
 		final ArrayList<SampleModel> answer = new ArrayList<SampleModel>();
 		for (int i = 0; i < count; i++) {
-			answer.add(new SampleModel());
+			final SampleModel model = new SampleModel();
+			model.sequenceNumber = i;
+			answer.add(model);
 		}
 		return answer;
 	}
@@ -46,6 +48,7 @@ public class SampleModel {
 	public String state;
 	public String street;
 	public String zip;
+	public int sequenceNumber;
 
 	public SampleModel() {
 		super();

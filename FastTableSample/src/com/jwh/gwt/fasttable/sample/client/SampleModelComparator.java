@@ -23,12 +23,12 @@ public class SampleModelComparator implements Comparator<SampleModel> {
 
 	@Override
 	public int compare(SampleModel o1, SampleModel o2) {
-		final String a = get(o1);
-		final String b = get(o2);
+		final Comparable a = get(o1);
+		final Comparable b = get(o2);
 		return ascending ? a.compareTo(b) : b.compareTo(a);
 	}
 
-	private String get(SampleModel m) {
+	private Comparable get(SampleModel m) {
 		switch (column) {
 		case 1:
 			return m.name;
@@ -40,6 +40,8 @@ public class SampleModelComparator implements Comparator<SampleModel> {
 			return m.state;
 		case 5:
 			return m.zip;
+		case 6:
+			return m.sequenceNumber;
 		default:
 			break;
 		}

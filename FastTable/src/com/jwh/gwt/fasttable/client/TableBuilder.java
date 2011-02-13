@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.element.GenericElement;
@@ -15,6 +16,7 @@ import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
 import com.jwh.gwt.fasttable.client.selection.SelectionTracker;
+import com.jwh.gwt.fasttable.client.util.IdGenerator;
 import com.jwh.gwt.fasttable.client.util.Style;
 
 public abstract class TableBuilder<T> {
@@ -23,6 +25,16 @@ public abstract class TableBuilder<T> {
 		First, Last, Sorted
 	}
 
+	private IncrementalBuilder<T> incrementalBuilder;
+	
+	protected void cancelIncrementalBuilder() {
+		if (incrementalBuilder != null) {
+			incrementalBuilder.cancel();
+		}
+	}
+	public void setIncrementalBuilder(IncrementalBuilder<T> incrementalBuilder) {
+		this.incrementalBuilder = incrementalBuilder;
+	}
 	/**
 	 * Implemented as an inner class so it can have access to sorting services
 	 */
@@ -98,18 +110,21 @@ public abstract class TableBuilder<T> {
 		None, Ascending, Descending
 	}
 
-	Filter<T> defaultFilter = getDefaultFilter();
+	protected Filter<T> defaultFilter = getDefaultFilter();
 
-	Filter<T> filter = defaultFilter;
+	protected Filter<T> filter = defaultFilter;
 
-	HashMap<Integer, SortAction> currentSortAction = new HashMap<Integer, TableBuilder.SortAction>();
+	protected HashMap<Integer, SortAction> currentSortAction = new HashMap<Integer, TableBuilder.SortAction>();
 
-	ArrayList<T> allObjects = new ArrayList<T>();
+	protected ArrayList<T> allObjects = new ArrayList<T>();
 
-	ArrayList<T> filteredObjects = new ArrayList<T>();
-	int lastSortColumn = 0;
+	protected ArrayList<T> filteredObjects = new ArrayList<T>();
+	protected int lastSortColumn = 0;
 
-	final SelectionTracker<T> selectionTracker = new SelectionTracker<T>();
+	public ArrayList<T> getFilteredObjects() {
+		return filteredObjects;
+	}
+	protected final SelectionTracker<T> selectionTracker = new SelectionTracker<T>();
 
 	public Table<T> table = new Table<T>();
 
@@ -165,19 +180,34 @@ public abstract class TableBuilder<T> {
 
 	private void buildRows() {
 		final GenericElement tbody = GenericElement.getTableBody(table.builder);
-		// TODO test code: API to set height
-		// This works only in Firefox
-		// tbody.setStyle("TABLE_500");
+		final String tbodyId = IdGenerator.getNextId();
+		tbody.setId(tbodyId);
 		tbody.closeOpeningTag();
+		int count = 0;
 		for (final T t : filteredObjects) {
 			final Row row = table.newRow();
 			final String refId = table.register(t, row);
 			populateRowCells(t, row, refId);
+			count++;
+			if (useIncrementalBuild && count >= IncrementalBuilder.buildCount) {
+				scheduleIncrementalTimer(count, new ArrayList<T>(filteredObjects), tbodyId);
+				break;
+			}
 		}
 		table.cleanupCurrentRow();
 		tbody.cleanup();
 	}
 
+	private void scheduleIncrementalTimer(int startIndex, ArrayList<T> items, String refId) {
+		final IncrementalBuilder<T> b = new IncrementalBuilder<T>(this, items, refId, startIndex);
+		final Timer timer = new Timer() {			
+			@Override
+			public void run() {
+				b.build();
+			}
+		};
+		timer.schedule(10);
+	}
 	private void doFilter() {
 		if (filter == defaultFilter) {
 			filteredObjects = allObjects;
@@ -223,7 +253,7 @@ public abstract class TableBuilder<T> {
 		};
 	}
 
-	private Document getDocument() {
+	public Document getDocument() {
 		return getContainingElement().getElement().getOwnerDocument();
 	}
 
@@ -366,5 +396,12 @@ public abstract class TableBuilder<T> {
 	public void updateView() {
 		getContainingElement().clear();
 		getContainingElement().getElement().setInnerHTML(getHtml());
+	}
+	boolean useIncrementalBuild = true;
+	
+	public void setUseIncrementalBuild(boolean b) {
+		System.out.println("Use incremental build: " + b);
+		useIncrementalBuild = false;
+		updateView();
 	}
 }
