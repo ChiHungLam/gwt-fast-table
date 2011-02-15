@@ -6,7 +6,8 @@ import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent;
 import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.TableBuilder;
-import com.jwh.gwt.fasttable.client.element.Row;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
 
 
 public class TableBuilderTest implements SampleStyle {
@@ -16,12 +17,12 @@ public class TableBuilderTest implements SampleStyle {
 		final TableBuilder<SampleModel> builder = new TableBuilder<SampleModel>() {
 
 			@Override
-			public void buildFooter(Row row) {
-				row.newCell().addContents(NAME);
-				row.newCell().addContents(BORDER_OPEN_RIGHT);
-				row.newCell().addContents(BORDER_OPEN_LEFT_RIGHT);
-				row.newCell().addContents(BORDER_OPEN_LEFT);
-				row.newCell().addContents(BORDER);
+			public void buildFooter(HtmlElement row) {
+				row.addChild(Tag.td).addContents(NAME);
+				row.addChild(Tag.td).addContents(BORDER_OPEN_RIGHT);
+				row.addChild(Tag.td).addContents(BORDER_OPEN_LEFT_RIGHT);
+				row.addChild(Tag.td).addContents(BORDER_OPEN_LEFT);
+				row.addChild(Tag.td).addContents(BORDER);
 			}
 			
 			public void buildHeader(TableBuilder<SampleModel>.SortableHeaderRow headerRow) {
@@ -33,14 +34,14 @@ public class TableBuilderTest implements SampleStyle {
 			}
 			
 			@Override
-			protected void populateRowCells(SampleModel t, Row row, String refId) {
+			protected void populateRowCells(SampleModel t, HtmlElement row, String refId) {
 				CellListener<SampleModel> listener = buildCellListener();
 //				CellHandlerWrapper<SampleModel> wrapper = table.registerCellHandler(listener, OnEvent.onMouseOver, OnEvent.onMouseOut);
-				row.newCell().setStyle(NAME).addContents(t.name); //.addHandler(wrapper, refId, 0);
-				row.newCell().setStyle(BORDER_OPEN_RIGHT).addContents(t.street);
-				row.newCell().setStyle(BORDER_OPEN_LEFT_RIGHT).addContents(t.city);
-				row.newCell().setStyle(BORDER_OPEN_LEFT).addContents(t.state);
-				row.newCell().setStyle(BORDER).addContents(t.zip); // .addHandler(wrapper, refId, 0);				
+				row.addChild(Tag.td).setStyle(NAME).addContents(t.name); //.addHandler(wrapper, refId, 0);
+				row.addChild(Tag.td).setStyle(BORDER_OPEN_RIGHT).addContents(t.street);
+				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT_RIGHT).addContents(t.city);
+				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT).addContents(t.state);
+				row.addChild(Tag.td).setStyle(BORDER).addContents(t.zip); // .addHandler(wrapper, refId, 0);				
 			}
 
 			private CellListener<SampleModel> buildCellListener() {
