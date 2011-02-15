@@ -27,10 +27,11 @@ import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.TableBuilder;
-import com.jwh.gwt.fasttable.client.element.Row;
 import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.util.LabelValueUtil;
 import com.jwh.gwt.fasttable.client.util.Style;
 
@@ -173,13 +174,13 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			CellHandlerWrapper<SampleModel> cellHandler;
 
 			@Override
-			public void buildFooter(Row row) {
-				row.newCell().addContents(COLUMN_NAME);
-				row.newCell().addContents(COLUMN_STREET);
-				row.newCell().addContents(COLUMN_CITY);
-				row.newCell().addContents(COLUMN_STATE);
-				row.newCell().addContents(COLUMN_ZIP);
-				row.newCell().addContents(COLUMN_ID);
+			public void buildFooter(HtmlElement row) {
+				row.addChild(Tag.td).addContents(COLUMN_NAME);
+				row.addChild(Tag.td).addContents(COLUMN_STREET);
+				row.addChild(Tag.td).addContents(COLUMN_CITY);
+				row.addChild(Tag.td).addContents(COLUMN_STATE);
+				row.addChild(Tag.td).addContents(COLUMN_ZIP);
+				row.addChild(Tag.td).addContents(COLUMN_ID);
 			}
 
 			@Override
@@ -212,15 +213,15 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			}
 
 			@Override
-			protected void populateRowCells(SampleModel t, Row row, String refId) {
-				row.newCell().setStyle(NAME, CURSOR_POINTER, UNSELECTED)
+			protected void populateRowCells(SampleModel t, HtmlElement row, String refId) {
+				row.addChild(Tag.td).setStyle(NAME, CURSOR_POINTER, UNSELECTED)
 						.addHandler(getCellHandler(), refId, 1).addContents(t.name);
-				row.newCell().setStyle(BORDER_OPEN_RIGHT).addContents(t.street);
-				row.newCell().setStyle(BORDER_OPEN_LEFT_RIGHT).addContents(t.city);
-				row.newCell().setStyle(BORDER_OPEN_LEFT).addContents(t.state);
-				row.newCell().setStyle(BORDER, CURSOR_POINTER).addHandler(getCellHandler(), refId, 5)
+				row.addChild(Tag.td).setStyle(BORDER_OPEN_RIGHT).addContents(t.street);
+				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT_RIGHT).addContents(t.city);
+				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT).addContents(t.state);
+				row.addChild(Tag.td).setStyle(BORDER, CURSOR_POINTER).addHandler(getCellHandler(), refId, 5)
 						.addContents(t.zip);
-				row.newCell().setStyle(BORDER_OPEN_LEFT).addContents(String.valueOf(t.sequenceNumber));
+				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT).addContents(String.valueOf(t.sequenceNumber));
 			}
 
 			@Override
