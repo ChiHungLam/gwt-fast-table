@@ -20,6 +20,7 @@ import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
  * 
  * @author jheyne
  */
+@Deprecated
 public abstract class HtmlElement {
 
 	enum State {

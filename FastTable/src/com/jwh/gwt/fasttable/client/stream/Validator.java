@@ -23,7 +23,7 @@ public class Validator {
 		case thead:
 			return child == Tag.th;
 		case tr:
-			return child == Tag.td;
+			return child == Tag.td || child == Tag.th;
 		default:
 			break;
 		}
