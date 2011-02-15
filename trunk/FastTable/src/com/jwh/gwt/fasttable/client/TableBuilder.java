@@ -8,14 +8,14 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
-import com.jwh.gwt.fasttable.client.element.GenericElement;
-import com.jwh.gwt.fasttable.client.element.HeaderRow;
-import com.jwh.gwt.fasttable.client.element.Row;
 import com.jwh.gwt.fasttable.client.element.Table;
 import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
 import com.jwh.gwt.fasttable.client.selection.SelectionTracker;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.util.IdGenerator;
 import com.jwh.gwt.fasttable.client.util.Style;
 
@@ -38,13 +38,15 @@ public abstract class TableBuilder<T> {
 	/**
 	 * Implemented as an inner class so it can have access to sorting services
 	 */
-	public class SortableHeaderRow extends HeaderRow {
+	public class SortableHeaderRow {
 		CellHandlerWrapper<T> sortHandler = null;
 
 		int columnCount = 0;
 
-		public SortableHeaderRow(StringBuilder builder) {
-			super(builder);
+		private final HtmlElement tr;
+
+		public SortableHeaderRow() {
+			tr = HtmlFactory.forRoot(Tag.tr);
 		}
 
 		public CellHandlerWrapper<T> getSortListener() {
@@ -74,18 +76,17 @@ public abstract class TableBuilder<T> {
 			return sortHandler;
 		}
 
-		@Override
-		public GenericElement newHeaderCell() {
+		public HtmlElement newHeaderCell() {
 			return newHeaderCell(new String[0]);
 		}
 
-		public GenericElement newHeaderCell(String... styles) {
+		public HtmlElement newHeaderCell(String... styles) {
 			final ArrayList<String> allStyles = new ArrayList<String>();
 			for (final String style : styles) {
 				allStyles.add(style);
 			}
 			columnCount++;
-			final GenericElement cell = super.newHeaderCell();
+			final HtmlElement cell = tr.addChild(Tag.th);
 			final SortAction sortAction = getCachedSortAction(columnCount);
 			switch (sortAction) {
 			case Ascending:
@@ -103,6 +104,10 @@ public abstract class TableBuilder<T> {
 			}
 			cell.setStyle(allStyles.toArray(new String[allStyles.size()]));
 			return cell;
+		}
+
+		public String toHtml() {
+			return tr.toHtml();
 		}
 	}
 
@@ -137,20 +142,18 @@ public abstract class TableBuilder<T> {
 	 * 
 	 * @param headerRow
 	 */
-	public void buildFooter(Row row) {
+	public void buildFooter(HtmlElement row) {
 
 	}
 
 	private void buildFooterPrivate() {
-		final StringBuilder b = new StringBuilder();
-		final Row headerRow = new Row(b);
-		final int length = b.length();
-		buildFooter(headerRow);
-		if (length != b.length()) {
-			headerRow.cleanup();
-			final GenericElement tfoot = GenericElement.getTableFooter(table.builder);
+		final HtmlElement row = HtmlFactory.forRoot(Tag.tr);
+		final int length = row.getHtmlLength();
+		buildFooter(row);
+		if (length != row.getHtmlLength()) {
+			final HtmlElement tfoot = table.getRoot().addChild(Tag.tfoot);
 			tfoot.setId(getFooterId());
-			tfoot.setContentsRaw(b.toString());
+			tfoot.setContentsRaw(row.toHtml());
 			tfoot.cleanup();
 		}
 
@@ -166,26 +169,24 @@ public abstract class TableBuilder<T> {
 	}
 
 	private void buildHeaderPrivate() {
-		final StringBuilder b = new StringBuilder();
-		final SortableHeaderRow headerRow = new SortableHeaderRow(b);
-		headerRow.setId(getHeaderId());
+		final SortableHeaderRow headerRow = new SortableHeaderRow();
+		headerRow.tr.setId(getHeaderId());
 		buildHeader(headerRow);
-		if (headerRow.currentCell != null) {
-			headerRow.cleanup();
-			final GenericElement thead = GenericElement.getTableHeader(table.builder);
-			thead.setContentsRaw(b.toString());
+		if (headerRow.columnCount > 0) {
+			final HtmlElement thead = table.getRoot().addChild(Tag.thead);
+			thead.setContentsRaw(headerRow.toHtml());
 			thead.cleanup();
 		}
 	}
 
 	private void buildRows() {
-		final GenericElement tbody = GenericElement.getTableBody(table.builder);
+		final HtmlElement tbody = table.getRoot().addChild(Tag.tbody);
 		final String tbodyId = IdGenerator.getNextId();
 		tbody.setId(tbodyId);
 		tbody.closeOpeningTag();
 		int count = 0;
 		for (final T t : filteredObjects) {
-			final Row row = table.newRow();
+			final HtmlElement row = tbody.addChild(Tag.tr);
 			final String refId = table.register(t, row);
 			populateRowCells(t, row, refId);
 			count++;
@@ -194,7 +195,6 @@ public abstract class TableBuilder<T> {
 				break;
 			}
 		}
-		table.cleanupCurrentRow();
 		tbody.cleanup();
 	}
 
@@ -274,7 +274,6 @@ public abstract class TableBuilder<T> {
 	public String getHtml() {
 		doFilter();
 		table.reset();
-		table.closeOpeningTag();
 		buildHeaderPrivate();
 		buildRows();
 		buildFooterPrivate();
@@ -310,7 +309,7 @@ public abstract class TableBuilder<T> {
 	 * @param refId
 	 *            TODO
 	 */
-	protected abstract void populateRowCells(T t, Row row, String refId);
+	protected abstract void populateRowCells(T t, HtmlElement row, String refId);
 
 	public void remove(T domainObject) {
 		// TODO

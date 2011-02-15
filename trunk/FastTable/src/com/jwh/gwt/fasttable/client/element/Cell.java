@@ -12,6 +12,7 @@ package com.jwh.gwt.fasttable.client.element;
  * 
  * @author jheyne
  */
+@Deprecated
 public class Cell extends HtmlElement {
 
 	public Cell(StringBuilder builder) {

@@ -16,10 +16,13 @@ import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.util.IdGenerator;
 import com.jwh.gwt.fasttable.client.util.Style;
 
-public class Table<T> extends HtmlElement {
+public class Table<T> {
 
 	@Deprecated
 	static int instanceCounter = 1;
@@ -28,12 +31,6 @@ public class Table<T> extends HtmlElement {
 	 * Used for generating unique row ids
 	 */
 	int currentId = 0;
-
-	/**
-	 * Cache the current row so it can be cleaned up if a new row is added, or
-	 * we are done adding rows.
-	 */
-	Row currentRow;
 
 	/**
 	 * Table to locate cell handlers
@@ -52,20 +49,19 @@ public class Table<T> extends HtmlElement {
 	 */
 	private final HashMap<String, T> lookup = new HashMap<String, T>();
 
+	final private HtmlElement root;
+
 	public Table() {
-		super(new StringBuilder());
+		root = HtmlFactory.forRoot(Tag.table);
 		this.identifier = IdGenerator.getNextId();
-		setId(getId());
-		setStyle(Style.BORDER_NONE);
+		root.setId(getId());
+		root.setStyle(Style.BORDER_NONE);
 	}
 
-	public void cleanupCurrentRow() {
-		if (currentRow != null) {
-			currentRow.cleanup();
-			currentRow = null;
-		}
+	public HtmlElement getRoot() {
+		return root;
 	}
-
+	
 	/**
 	 * A little magic happens here. All cell event handlers call a function
 	 * named "fnct"[+digit]. Because GWT will obfuscate function names, we must
@@ -112,27 +108,6 @@ public class Table<T> extends HtmlElement {
 		return identifier + "_table";
 	}
 
-	// public native void defineCellHandler1(Table<T> x)/*-{
-	// $wnd.fctn1 = function (stubId, objectId, field, event) {
-	// x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(stubId,objectId,field,event);
-	// };
-	// }-*/
-	// ;
-	//
-	// public native void defineCellHandler2(Table<T> x)/*-{
-	// $wnd.fctn2 = function (stubId, objectId, field, event) {
-	// x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(stubId,objectId,field,event);
-	// };
-	// }-*/
-	// ;
-	//
-	// public native void defineCellHandler3(Table<T> x)/*-{
-	// $wnd.fctn3 = function (stubId, objectId, field, event) {
-	// x.@com.jwh.gwt.fasttable.client.Table::handleCellEvent(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(stubId,objectId,field,event);
-	// };
-	// }-*/
-	// ;
-
 	public String getRefId(T object) throws NotFound {
 		final Set<Entry<String, T>> entrySet = lookup.entrySet();
 		for (final Entry<String, T> entry : entrySet) {
@@ -141,11 +116,6 @@ public class Table<T> extends HtmlElement {
 			}
 		}
 		throw new NotFound();
-	}
-
-	@Override
-	public String getTag() {
-		return "table";
 	}
 
 	/**
@@ -167,17 +137,6 @@ public class Table<T> extends HtmlElement {
 	}
 
 	/**
-	 * @return a new row, first cleaning up any existing row
-	 */
-	public Row newRow() {
-		closeOpeningTag();
-		if (currentRow != null) {
-			currentRow.cleanup();
-		}
-		return currentRow = new Row(builder);
-	}
-
-	/**
 	 * @return a unique row identifier for this table
 	 */
 	private int nextID() {
@@ -194,7 +153,7 @@ public class Table<T> extends HtmlElement {
 	 * @return The unique identifier used as a row refId and key to finding the
 	 *         model object for event handler callbacks
 	 */
-	public String register(T object, Row row) {
+	public String register(T object, HtmlElement row) {
 		final String id = identifier + nextID();
 		lookup.put(id, object);
 		row.setId(id);
@@ -220,18 +179,13 @@ public class Table<T> extends HtmlElement {
 	 * prepare to be reused to accommodate a change in the displayed objects
 	 */
 	public void reset() {
-		builder.setLength(0);
-		writeOpeningTag();
-		currentRow = null;
+		root.reset(Tag.table);
 		lookup.clear();
-		currentState = State.StartTag;
 	}
 
 	@Override
 	public String toString() {
-		cleanupCurrentRow();
-		cleanup();
-		return builder.toString();
+		return root.toHtml();
 	}
 
 }

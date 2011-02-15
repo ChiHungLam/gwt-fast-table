@@ -6,7 +6,9 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
-import com.jwh.gwt.fasttable.client.element.Row;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.util.IdGenerator;
 
 /**
@@ -123,14 +125,14 @@ public class IncrementalBuilder<T> {
 	String lastId = null;
 
 	private void generateHtml() {
-		final StringBuilder b = new StringBuilder();
+		final HtmlElement tbody = HtmlFactory.forRoot(Tag.tbody);
 		for (int i = startIndex; i < Math.min(items.size(), startIndex + buildCount); i++) {
 			final T object = items.get(i);
-			final Row row = new Row(b);
+			final HtmlElement row = tbody.addChild(Tag.tr);
 			lastId = tableBuilder.table.register(object, row);
 			tableBuilder.populateRowCells(object, row, lastId);
 			row.cleanup();
 		}
-		html = b.toString();
+		html = tbody.toHtml();
 	}
 }

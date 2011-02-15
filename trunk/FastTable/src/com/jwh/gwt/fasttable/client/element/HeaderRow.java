@@ -1,5 +1,6 @@
 package com.jwh.gwt.fasttable.client.element;
 
+@Deprecated
 public class HeaderRow extends HtmlElement {
 
 	public GenericElement currentCell = null;

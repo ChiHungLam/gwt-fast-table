@@ -1,5 +1,6 @@
 package com.jwh.gwt.fasttable.client.element;
 
+@Deprecated
 public class GenericElement extends HtmlElement {
 
 	public static GenericElement getCell(StringBuilder builder) {

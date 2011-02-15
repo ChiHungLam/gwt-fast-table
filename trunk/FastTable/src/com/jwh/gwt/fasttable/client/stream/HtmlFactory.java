@@ -1,11 +1,11 @@
 package com.jwh.gwt.fasttable.client.stream;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
 
 public class HtmlFactory {
 
@@ -236,15 +236,37 @@ public class HtmlFactory {
 			}
 			final HtmlElement recycled = recycleBin.remove(0);
 			recycled.currentState = State.StartTag;
+			recycled.currentChild = null;
 			return recycled;
 		}
 
 		public int getRecycledCount() {
 			return recycleBin.size();
 		}
+
+		public void reset(Tag tag) {
+			recycleBin.remove(this);
+			this.tag = tag;
+			currentChild = null;
+			builder.setLength(0);
+			currentState = State.StartTag;
+			startOpenTag();
+		}
+
+		public int getHtmlLength() {
+			return builder.length();
+		}
+
+		public boolean hasChild() {
+			return currentChild != null;
+		}
 	}
 
-	Stack<HtmlElement> stack = new Stack<HtmlElement>();
-	HtmlElement currentElement;
+	public static String trimTag(String html, Tag tag) {
+		final int start = html.indexOf('>') + 1;
+		int stop = html.length() - (tag.name().length() + 3);
+		final String substring = html.substring(start, stop);
+		return substring;
+	}
 
 }
