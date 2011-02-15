@@ -127,6 +127,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				newRow.appendChild(td);
 				try {
 					LabelValueUtil util = new LabelValueUtil();
+					util.table.setStyle(Style.BORDER_NONE);
 					util.labelValue("Name", d.name);
 					util.prepareAttribute("rowspan", "2");
 					final String buttonId = util.button("OK");
