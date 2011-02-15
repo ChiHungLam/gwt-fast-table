@@ -4,10 +4,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.jwh.gwt.fasttable.client.element.Cell;
-import com.jwh.gwt.fasttable.client.element.HtmlElement;
-import com.jwh.gwt.fasttable.client.element.Row;
-import com.jwh.gwt.fasttable.client.element.Table;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
 
 /**
  * Utility to quickly layout common GUI elements in an HTML table
@@ -17,8 +16,8 @@ import com.jwh.gwt.fasttable.client.element.Table;
  */
 public class LabelValueUtil {
 
-	private Row currentRow = null;
-	private final Table<Object> table = new Table<Object>();
+	private HtmlElement currentRow = null;
+	public final HtmlElement table = HtmlFactory.forRoot(Tag.table);
 
 	final HashMap<String, String> preparedAttributes = new HashMap<String, String>();
 
@@ -53,9 +52,9 @@ public class LabelValueUtil {
 		preparedAttributes.clear();
 	}
 
-	private Row getCurrentRow() {
+	private HtmlElement getCurrentRow() {
 		if (currentRow == null) {
-			currentRow = table.newRow();
+			currentRow = table.addChild(Tag.tr);
 		}
 		return currentRow;
 	}
@@ -69,22 +68,22 @@ public class LabelValueUtil {
 	 */
 	public String labelValue(String label, String value) {
 		final String id = IdGenerator.getNextId();
-		final Cell first = newCell();
+		final HtmlElement first = newCell();
 		first.setStyle(Style.LABEL, Style.BORDER_NONE);
-		first.newLabel().addAttribute("for", id).setStyle(Style.LABEL).addContents(label).cleanup();
+		first.addChild(Tag.label).addAttribute("for", id).setStyle(Style.LABEL).addContents(label).cleanup();
 		newCell().setId(id).setStyle(Style.VALUE_READ_ONLY, Style.BORDER_NONE).addContents(value);
 		return id;
 	}
 
-	private Cell newCell() {
-		return getCurrentRow().newCell();
+	private HtmlElement newCell() {
+		return getCurrentRow().addChild(Tag.td);
 	}
 
 	public void newRow() {
-		currentRow = table.newRow();
+		currentRow = table.addChild(Tag.tr);
 	}
 
 	public String toHtml() {
-		return table.toString();
+		return table.toHtml();
 	}
 }
