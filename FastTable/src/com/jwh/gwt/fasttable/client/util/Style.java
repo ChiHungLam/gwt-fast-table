@@ -36,5 +36,6 @@ public interface Style {
 	static final String VALIDATION_ERROR = "validationError";
 	static final String VALUE_EDIT = "valueEdit";
 	static final String VALUE_READ_ONLY = "valueReadOnly";
+	static final String ODD = "odd";
 
 }
