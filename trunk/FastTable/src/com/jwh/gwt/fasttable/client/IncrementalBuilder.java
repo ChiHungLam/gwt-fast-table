@@ -134,5 +134,6 @@ public class IncrementalBuilder<T> {
 			row.cleanup();
 		}
 		html = tbody.toHtml();
+		html = HtmlFactory.trimTag(html, Tag.tbody);
 	}
 }
