@@ -4,9 +4,9 @@ import static junit.framework.Assert.*;
 
 import org.junit.Test;
 
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 
 public class HtmlFactoryTest {
 
@@ -56,19 +56,6 @@ public class HtmlFactoryTest {
 		assertTrue("Expected Tbody", table.toHtml().indexOf("tbody") > 0);
 		assertTrue("Expected closing table tag", table.toHtml().indexOf("</table>") > 0);
 		System.out.println(table.toHtml());
-	}
-
-	@Test
-	public void testRecycling() throws Exception {
-		final HtmlElement table = HtmlFactory.forRoot(HtmlFactory.Tag.table);
-		final HtmlElement tbody = table.addChild(Tag.tbody);
-		final HtmlElement row = tbody.addChild(Tag.tr);
-		for (int i = 0; i < 4; i++) {
-			final HtmlElement child = row.addChild(Tag.td);
-			child.addContents(String.valueOf(i));
-		}
-		System.out.println(table.toHtml());
-		assertTrue("Expected multiple recycled", table.getRecycledCount() > 3);
 	}
 
 	@Test
