@@ -6,8 +6,8 @@ import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent;
 import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.TableBuilder;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 
 
 public class TableBuilderTest implements SampleStyle {
@@ -34,7 +34,7 @@ public class TableBuilderTest implements SampleStyle {
 			}
 			
 			@Override
-			protected void populateRowCells(SampleModel t, HtmlElement row, String refId) {
+			protected void populateRowCells(SampleModel t, HtmlElement row, String refId, int rowNumber) {
 				CellListener<SampleModel> listener = buildCellListener();
 //				CellHandlerWrapper<SampleModel> wrapper = table.registerCellHandler(listener, OnEvent.onMouseOver, OnEvent.onMouseOut);
 				row.addChild(Tag.td).setStyle(NAME).addContents(t.name); //.addHandler(wrapper, refId, 0);
