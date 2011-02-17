@@ -1,6 +1,6 @@
-package com.jwh.gwt.fasttable.client.stream;
+package com.jwh.gwt.fasttable.client.element;
 
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 
 public class Validator {
 

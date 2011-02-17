@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 
 /**
  * Utility to quickly layout common GUI elements in an HTML table

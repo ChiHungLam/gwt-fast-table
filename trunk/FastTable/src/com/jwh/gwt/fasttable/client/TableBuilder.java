@@ -8,14 +8,14 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory;
 import com.jwh.gwt.fasttable.client.element.Table;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
 import com.jwh.gwt.fasttable.client.selection.SelectionTracker;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.util.IdGenerator;
 import com.jwh.gwt.fasttable.client.util.Style;
 
@@ -183,12 +183,11 @@ public abstract class TableBuilder<T> {
 		final HtmlElement tbody = table.getRoot().addChild(Tag.tbody);
 		final String tbodyId = IdGenerator.getNextId();
 		tbody.setId(tbodyId);
-		tbody.closeOpeningTag();
 		int count = 0;
 		for (final T t : filteredObjects) {
 			final HtmlElement row = tbody.addChild(Tag.tr);
 			final String refId = table.register(t, row);
-			populateRowCells(t, row, refId);
+			populateRowCells(t, row, refId, count);
 			count++;
 			if (useIncrementalBuild && count >= IncrementalBuilder.buildCount) {
 				scheduleIncrementalTimer(count, new ArrayList<T>(filteredObjects), tbodyId);
@@ -308,8 +307,9 @@ public abstract class TableBuilder<T> {
 	 *            Add cells to the row
 	 * @param refId
 	 *            TODO
+	 * @param rowNumber TODO
 	 */
-	protected abstract void populateRowCells(T t, HtmlElement row, String refId);
+	protected abstract void populateRowCells(T t, HtmlElement row, String refId, int rowNumber);
 
 	public void remove(T domainObject) {
 		// TODO

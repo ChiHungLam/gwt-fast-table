@@ -1,35 +1,35 @@
-package com.jwh.gwt.fasttable.client.stream;
-
-import java.util.ArrayList;
+package com.jwh.gwt.fasttable.client.element;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
+import com.jwh.gwt.fasttable.client.exception.NotFound;
+import com.jwh.gwt.fasttable.client.util.RecycleBin;
 
 public class HtmlFactory {
 
 	private static final int DEFAULT_SIZE = 1000;
-
-	private HtmlFactory() {
-		this(DEFAULT_SIZE);
+	final private HtmlElement root;
+		private HtmlFactory(Tag tag) {
+		this(tag, DEFAULT_SIZE);
 	}
 
-	private HtmlFactory(int size) {
+	private HtmlFactory(Tag tag, int size) {
 		super();
 		builder = new StringBuilder(size);
+		root = createRoot(tag);
 	}
 
 	public static HtmlElement forRoot(Tag tag) {
-		final HtmlFactory stream = new HtmlFactory();
-		return stream.createRoot(tag);
+		final HtmlFactory stream = new HtmlFactory(tag);
+		return stream.root;
 	}
 
 	private HtmlElement createRoot(Tag tag) {
-		final HtmlElement htmlElement = new HtmlElement();
-		htmlElement.tag = tag;
-		htmlElement.startOpenTag();
-		return htmlElement;
+		HtmlElement element = new HtmlElement();
+		element.tag = tag;
+		element.startOpenTag();
+		return element;
 	}
 
 	final StringBuilder builder;
@@ -42,18 +42,14 @@ public class HtmlFactory {
 		table, thead, tbody, tfoot, tr, th, td, label, input
 	}
 
-	final ArrayList<HtmlElement> recycleBin = new ArrayList<HtmlElement>();
+	final RecycleBin<HtmlElement> recycleBin = new RecycleBin<HtmlElement>(new HtmlElement[] {
+			new HtmlElement(), new HtmlElement(), new HtmlElement(), new HtmlElement(), new HtmlElement(),
+			new HtmlElement(), new HtmlElement(), new HtmlElement(), new HtmlElement() });
 
 	public class HtmlElement {
 		State currentState = State.StartTag;
 
 		Tag tag;
-
-		public HtmlElement recycleAs(Tag tag) {
-			currentState = State.StartTag;
-			this.tag = tag;
-			return this;
-		}
 
 		/**
 		 * Add content to the tag. Uses @see SafeHtmlUtils to mitigate security
@@ -93,13 +89,20 @@ public class HtmlFactory {
 
 		HtmlElement currentChild;
 
+		public HtmlElement() {
+			super();
+			// TODO Auto-generated constructor stub
+		}
+
 		public HtmlElement addChild(Tag tag) {
 			assert Validator.validateChild(this.tag, tag) : this.tag + " cannot have child: " + tag;
 			closeOpeningTag();
 			if (currentChild != null) {
 				currentChild.cleanup();
 			}
-			return currentChild = beginTag(tag);
+			currentChild = beginTag(tag);
+			assert currentChild != this : "child and parent should be different";
+			return currentChild;
 		}
 
 		private HtmlElement beginTag(Tag tag) {
@@ -205,7 +208,7 @@ public class HtmlFactory {
 			return this;
 		}
 
-		public HtmlElement closeOpeningTag() {
+		private HtmlElement closeOpeningTag() {
 			if (currentState == State.StartTag) {
 				builder.append('>');
 				currentState = State.Contents;
@@ -219,33 +222,34 @@ public class HtmlFactory {
 		public void cleanup() {
 			if (currentState != State.EndTag) {
 				closeOpeningTag();
-				if (currentState != State.EndTag) {
-					cleanupPendingChildren();
-					builder.append("</");
-					builder.append(tag);
-					builder.append('>');
-					recycleBin.add(this);
+			}
+			if (currentState != State.EndTag) {
+				cleanupPendingChildren();
+				builder.append("</");
+				builder.append(tag);
+				builder.append('>');
+				if (this != root) {
+					recycleBin.put(this);
 				}
-				currentState = State.EndTag;
 			}
+			currentState = State.EndTag;
 		}
 
-		private HtmlElement getElement() {
-			if (recycleBin.isEmpty()) {
-				return new HtmlElement();
-			}
-			final HtmlElement recycled = recycleBin.remove(0);
-			recycled.currentState = State.StartTag;
-			recycled.currentChild = null;
-			return recycled;
-		}
-
-		public int getRecycledCount() {
-			return recycleBin.size();
+		private HtmlElement getElement() {			
+				HtmlElement recycled;
+				try {
+					recycled = recycleBin.get();
+				} catch (NotFound e) {
+					assert false : "Should not need to create element. Need to make recycle bin bigger?";
+					recycled = new HtmlElement();
+				}
+				recycled.currentState = State.StartTag;
+				recycled.currentChild = null;
+				return recycled;
 		}
 
 		public void reset(Tag tag) {
-			recycleBin.remove(this);
+			assert this.tag == tag : "Expected root tag not to change";
 			this.tag = tag;
 			currentChild = null;
 			builder.setLength(0);
