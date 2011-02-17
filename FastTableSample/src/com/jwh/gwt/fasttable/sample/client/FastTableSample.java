@@ -27,11 +27,11 @@ import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.TableBuilder;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.util.LabelValueUtil;
 import com.jwh.gwt.fasttable.client.util.Style;
 
@@ -124,7 +124,11 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				final SampleModel d = event.getDomainObject();
 				final TableRowElement newRow = event.insertRowAfter(document);
 				final TableCellElement td = document.createTDElement();
-				td.setAttribute("colspan", "6");
+				for (int i = 0; i < 6; i++) {
+					
+				}
+				// Note: "colSpan" must have uppercase 'S' for IE
+				td.setAttribute("colSpan", "6");
 				newRow.appendChild(td);
 				try {
 					LabelValueUtil util = new LabelValueUtil();
@@ -213,7 +217,8 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			}
 
 			@Override
-			protected void populateRowCells(SampleModel t, HtmlElement row, String refId) {
+			protected void populateRowCells(SampleModel t, HtmlElement row, String refId, int rowNumber) {
+				row.setStyle(rowNumber % 2 == 0 ? Style.EVEN : Style.ODD);
 				row.addChild(Tag.td).setStyle(NAME, CURSOR_POINTER, UNSELECTED)
 						.addHandler(getCellHandler(), refId, 1).addContents(t.name);
 				row.addChild(Tag.td).setStyle(BORDER_OPEN_RIGHT).addContents(t.street);
