@@ -21,7 +21,7 @@
     <!-- If you add any GWT meta tags, they must   -->
     <!-- be added before this line.                -->
     <!--                                           -->
-    <script type="text/javascript" language="javascript" src="fasttablesample/fasttablesample.nocache.js"></script>
+    <script type="text/javascript" src="fasttablesample/fasttablesample.nocache.js"></script>
   </head>
 
   <!--                                           -->
@@ -43,13 +43,16 @@
       </div>
     </noscript>
 
-    <table align="center" >
-      <tr>
-        <td colspan="2" style="font-weight:bold;">[Alpha] Experimental API to build full-featured, fast-rendering large tables, while providing full access to the underlying domain objects and DOM elements</td>        
+    <table class="borderNone" >
+      <tr class="borderNone">
+        <td class="borderNone" style="font-weight:bold;">[Beta] Experimental API to build full-featured, fast-rendering large tables, while providing full access to the underlying domain objects and DOM elements</td>        
       </tr>
-      <tr>
-        <td ><div id="tableContainer" style="height:500;"> </div></td>
-        <td id="helpContainer"></td>
+      <tr class="borderNone">
+        <td class="borderNone"><div id="helpContainer">
+        When the page is loaded, 1000 simple domain objects are generated and displayed. To evaluate performance, sort by clicking a column header. To demonstrate cell-level event handling, mouse over "Name" or "Zip" cells. Select a row by clicking "Name" or "Zip" -- the resulting drop panel demonstrates that we have access to the underlying domain object and DOM structure. Clicking the drop panel "OK" button exhibits the smooth integration of "setInnerHtml()" and standard GWT widget technologies.</div></td>
+      </tr>
+      <tr class="borderNone">
+        <td class="borderNone"><div id="tableContainer"> </div></td>
       </tr>
     </table>
   </body>
