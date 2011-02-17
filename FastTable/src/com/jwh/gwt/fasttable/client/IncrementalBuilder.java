@@ -6,9 +6,9 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.util.IdGenerator;
 
 /**
@@ -130,7 +130,7 @@ public class IncrementalBuilder<T> {
 			final T object = items.get(i);
 			final HtmlElement row = tbody.addChild(Tag.tr);
 			lastId = tableBuilder.table.register(object, row);
-			tableBuilder.populateRowCells(object, row, lastId);
+			tableBuilder.populateRowCells(object, row, lastId, i);
 			row.cleanup();
 		}
 		html = tbody.toHtml();

@@ -15,10 +15,9 @@ import com.jwh.gwt.fasttable.client.CellEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
+import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.stream.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.util.IdGenerator;
 import com.jwh.gwt.fasttable.client.util.Style;
 
