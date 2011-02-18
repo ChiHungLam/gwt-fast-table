@@ -22,6 +22,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.jwh.gwt.fasttable.client.CellEvent;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
@@ -50,6 +51,9 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 	private static final String COLUMN_STREET = "Street";
 	private RootPanel tablePanel;
 	private TableBuilder<SampleModel> builder;
+	@Deprecated
+	private Label help;
+	private VerticalPanel logger;
 
 	private CellListener<SampleModel> buildCellListener() {
 		return new CellListener<SampleModel>() {
@@ -124,9 +128,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				final SampleModel d = event.getDomainObject();
 				final TableRowElement newRow = event.insertRowAfter(document);
 				final TableCellElement td = document.createTDElement();
-				for (int i = 0; i < 6; i++) {
-					
-				}
+				td.addClassName(DROP_PANEL);
 				// Note: "colSpan" must have uppercase 'S' for IE
 				td.setAttribute("colSpan", "6");
 				newRow.appendChild(td);
@@ -134,7 +136,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 					LabelValueUtil util = new LabelValueUtil();
 					util.table.setStyle(Style.BORDER_NONE);
 					util.labelValue("Name", d.name);
-					util.prepareAttribute("rowspan", "2");
+					util.prepareAttribute("rowSpan", "2");
 					final String buttonId = util.button("OK");
 					util.newRow();
 					util.labelValue("Street", d.street);
@@ -216,16 +218,29 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				return SortAction.Ascending;
 			}
 
+			public void logError(String message) {
+				final Label entry = new Label(message);
+				entry.addStyleName(LOG_ERROR);
+				entry.removeStyleName(LOG_SUCCESS);
+				logger.add(entry);
+			};
+
+			public void logInfo(String message) {
+				final Label entry = new Label(message);
+				entry.removeStyleName(LOG_ERROR);
+				entry.addStyleName(LOG_SUCCESS);
+				logger.add(entry);
+			};
+
 			@Override
 			protected void populateRowCells(SampleModel t, HtmlElement row, String refId, int rowNumber) {
 				row.setStyle(rowNumber % 2 == 0 ? Style.EVEN : Style.ODD);
-				row.addChild(Tag.td).setStyle(NAME, CURSOR_POINTER, UNSELECTED)
-						.addHandler(getCellHandler(), refId, 1).addContents(t.name);
+				row.addHandler(getCellHandler(), refId, 0);
+				row.addChild(Tag.td).setStyle(NAME, CURSOR_POINTER, UNSELECTED).addContents(t.name);
 				row.addChild(Tag.td).setStyle(BORDER_OPEN_RIGHT).addContents(t.street);
 				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT_RIGHT).addContents(t.city);
 				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT).addContents(t.state);
-				row.addChild(Tag.td).setStyle(BORDER, CURSOR_POINTER).addHandler(getCellHandler(), refId, 5)
-						.addContents(t.zip);
+				row.addChild(Tag.td).setStyle(BORDER).addContents(t.zip);
 				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT).addContents(String.valueOf(t.sequenceNumber));
 			}
 
@@ -244,8 +259,10 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 	@Override
 	public void onModuleLoad() {
 		tablePanel = RootPanel.get("tableContainer");
-		RootPanel.get("helpContainer").add(new Label("Under Construction"));
+		help = new Label();
+		RootPanel.get("helpContainer").add(help);
+		logger = new VerticalPanel();
+		RootPanel.get("loggerContainer").add(logger);
 		buildTable();
 	}
-
 }
