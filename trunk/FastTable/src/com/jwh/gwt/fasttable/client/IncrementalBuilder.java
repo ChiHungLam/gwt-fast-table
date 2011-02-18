@@ -58,7 +58,7 @@ public class IncrementalBuilder<T> {
 	String html;
 
 	private void scheduleInsert() {
-		System.out.println("scheduling insert");
+		tableBuilder.logInfo("scheduling insert");
 		final Element previousTBody = getPreviousTBody();
 		if (!cancelled && previousTBody == null && scheduleWaitCount < 30) {
 			final Timer timer = new Timer() {
@@ -67,15 +67,14 @@ public class IncrementalBuilder<T> {
 					IncrementalBuilder.this.scheduleInsert();
 				}
 			};
-			System.out.println("waiting " + scheduleWaitCount);
+			tableBuilder.logInfo("waiting " + scheduleWaitCount);
 			scheduleWaitCount++;
-			System.out.println("waiting");
 			timer.schedule(50);
 		} else {
 			if (!cancelled && previousTBody != null) {
 				insertHtml();
 			} else {
-				System.err.println("Waited too long");
+				tableBuilder.logError("Waited too long");
 			}
 		}
 
@@ -106,7 +105,8 @@ public class IncrementalBuilder<T> {
 	}
 
 	private void insertHtml() {
-		final Element lastItem = Document.get().getElementById(refId);
+		final Document document = Document.get();
+		final Element lastItem = document.getElementById(refId);
 		final com.google.gwt.user.client.Element tBody = DOM.createTBody();
 		tBody.setId(myId);
 		try {
@@ -114,7 +114,9 @@ public class IncrementalBuilder<T> {
 			tBody.setInnerHTML(html);
 		} catch (Exception e) {
 //			for IE
+			tableBuilder.logError("Error inserting html: " + e.getMessage());
 			tableBuilder.setUseIncrementalBuild(false);
+			return;
 		}
 		if (cancelled) {
 			return;

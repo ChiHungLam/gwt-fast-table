@@ -38,5 +38,8 @@ public interface Style {
 	static final String VALUE_READ_ONLY = "valueReadOnly";
 	static final String EVEN = "even";
 	static final String ODD = "odd";
+	static final String DROP_PANEL = "dropPanel";
+	static final String LOG_ERROR = "logError";
+	static final String LOG_SUCCESS = "logSuccess";
 
 }
