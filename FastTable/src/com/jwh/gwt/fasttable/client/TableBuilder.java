@@ -25,6 +25,10 @@ public abstract class TableBuilder<T> {
 		First, Last, Sorted
 	}
 
+	public void logError(String message) {		
+	}
+	public void logInfo(String message) {		
+	}
 	private IncrementalBuilder<T> incrementalBuilder;
 	
 	protected void cancelIncrementalBuilder() {
@@ -399,7 +403,11 @@ public abstract class TableBuilder<T> {
 	boolean useIncrementalBuild = true;
 	
 	public void setUseIncrementalBuild(boolean b) {
-		System.out.println("Use incremental build: " + b);
+		if (b) {
+			logError("Use incremental build: " + b);
+		} else {
+			logInfo("Use incremental build: " + b);
+		}
 		useIncrementalBuild = false;
 		updateView();
 	}
