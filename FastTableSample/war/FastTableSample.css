@@ -192,10 +192,22 @@ tfoot {
 	visibility: hidden;
 }
 
-.odd {
-/*	background-color: #FFFFCC;*/
+.odd { /*	background-color: #FFFFCC;*/
+	
 }
 
 .even {
 	
+}
+
+.dropPanel {
+	border-top-width: medium;
+	border-bottom-width: medium;
+}
+
+.logError {
+	color: red;
+}
+.logSuccess {
+	color: green;;
 }
