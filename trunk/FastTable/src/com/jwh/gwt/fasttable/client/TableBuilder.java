@@ -406,6 +406,7 @@ public abstract class TableBuilder<T> {
 		if (b) {
 			logError("Use incremental build: " + b);
 		} else {
+			cancelIncrementalBuilder();
 			logInfo("Use incremental build: " + b);
 		}
 		useIncrementalBuild = false;

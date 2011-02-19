@@ -58,23 +58,28 @@ public class IncrementalBuilder<T> {
 	String html;
 
 	private void scheduleInsert() {
-		tableBuilder.logInfo("scheduling insert");
+		tableBuilder.logInfo("scheduling insert for " + startIndex);
 		final Element previousTBody = getPreviousTBody();
 		if (!cancelled && previousTBody == null && scheduleWaitCount < 30) {
+			tableBuilder.logInfo("waiting to insert " + scheduleWaitCount);
 			final Timer timer = new Timer() {
 				@Override
 				public void run() {
 					IncrementalBuilder.this.scheduleInsert();
 				}
 			};
-			tableBuilder.logInfo("waiting " + scheduleWaitCount);
 			scheduleWaitCount++;
 			timer.schedule(50);
 		} else {
-			if (!cancelled && previousTBody != null) {
-				insertHtml();
+			if (cancelled) {
+				tableBuilder.logInfo("Incremental insert cancelled - " + startIndex);
 			} else {
-				tableBuilder.logError("Waited too long");
+				if (previousTBody != null) {
+					tableBuilder.logInfo("inserting html - " + startIndex);
+					insertHtml();
+				} else {
+					tableBuilder.logError("Abandoning insert, waited too long - " + startIndex);
+				}
 			}
 		}
 
