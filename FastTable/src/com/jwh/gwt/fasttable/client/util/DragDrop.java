@@ -10,10 +10,13 @@ import com.google.gwt.event.dom.client.MouseWheelEvent;
 
 public class DragDrop extends HandlesAllMouseEvents {
 
-	enum State {Initial, MouseDown, DragPending, Dragging, OnTarget, DroppedOnTarget}
+	enum State {
+		Initial, MouseDown, DragPending, Dragging, OnTarget, DroppedOnTarget
+	}
 
 	State state = State.Initial;
 	private Object source;
+
 	@Override
 	public void onMouseDown(MouseDownEvent e) {
 		switch (state) {
@@ -24,38 +27,37 @@ public class DragDrop extends HandlesAllMouseEvents {
 		default:
 			break;
 		}
-		
-	}
 
-	@Override
-	public void onMouseUp(MouseUpEvent event) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onMouseMove(MouseMoveEvent event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onMouseOver(MouseOverEvent event) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void onMouseUp(MouseUpEvent event) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void onMouseWheel(MouseWheelEvent event) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	
+
 }

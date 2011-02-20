@@ -9,9 +9,9 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.element.HtmlFactory;
-import com.jwh.gwt.fasttable.client.element.Table;
 import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
 import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
+import com.jwh.gwt.fasttable.client.element.Table;
 import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
@@ -25,20 +25,6 @@ public abstract class TableBuilder<T> {
 		First, Last, Sorted
 	}
 
-	public void logError(String message) {		
-	}
-	public void logInfo(String message) {		
-	}
-	private IncrementalBuilder<T> incrementalBuilder;
-	
-	protected void cancelIncrementalBuilder() {
-		if (incrementalBuilder != null) {
-			incrementalBuilder.cancel();
-		}
-	}
-	public void setIncrementalBuilder(IncrementalBuilder<T> incrementalBuilder) {
-		this.incrementalBuilder = incrementalBuilder;
-	}
 	/**
 	 * Implemented as an inner class so it can have access to sorting services
 	 */
@@ -119,23 +105,23 @@ public abstract class TableBuilder<T> {
 		None, Ascending, Descending
 	}
 
+	private IncrementalBuilder<T> incrementalBuilder;
+
 	protected Filter<T> defaultFilter = getDefaultFilter();
-
 	protected Filter<T> filter = defaultFilter;
-
 	protected HashMap<Integer, SortAction> currentSortAction = new HashMap<Integer, TableBuilder.SortAction>();
 
 	protected ArrayList<T> allObjects = new ArrayList<T>();
 
 	protected ArrayList<T> filteredObjects = new ArrayList<T>();
+
 	protected int lastSortColumn = 0;
 
-	public ArrayList<T> getFilteredObjects() {
-		return filteredObjects;
-	}
 	protected final SelectionTracker<T> selectionTracker = new SelectionTracker<T>();
 
 	public Table<T> table = new Table<T>();
+
+	boolean useIncrementalBuild = true;
 
 	public void add(T domainObject, Position position) {
 		// TODO
@@ -204,16 +190,12 @@ public abstract class TableBuilder<T> {
 		tbody.cleanup();
 	}
 
-	private void scheduleIncrementalTimer(int startIndex, ArrayList<T> items, String refId) {
-		final IncrementalBuilder<T> b = new IncrementalBuilder<T>(this, items, refId, startIndex);
-		final Timer timer = new Timer() {			
-			@Override
-			public void run() {
-				b.build();
-			}
-		};
-		timer.schedule(10);
+	protected void cancelIncrementalBuilder() {
+		if (incrementalBuilder != null) {
+			incrementalBuilder.cancel();
+		}
 	}
+
 	private void doFilter() {
 		if (filter == defaultFilter) {
 			filteredObjects = allObjects;
@@ -263,6 +245,10 @@ public abstract class TableBuilder<T> {
 		return getContainingElement().getElement().getOwnerDocument();
 	}
 
+	public ArrayList<T> getFilteredObjects() {
+		return filteredObjects;
+	}
+
 	/**
 	 * @return The footer ID for external DOM manipulation
 	 */
@@ -307,6 +293,39 @@ public abstract class TableBuilder<T> {
 		return table.getId();
 	}
 
+	public void logError(String message) {
+	}
+
+	public void logInfo(String message) {
+	}
+
+	/**
+	 * register or unregister the selection, and update CSS selection
+	 * 
+	 * @param columnElement
+	 * @param domainObject
+	 * @param listener
+	 *            TODO
+	 * @return
+	 * @throws AbortOperation
+	 */
+	public void multiSelect(final Element columnElement, final T domainObject, SelectionListener<T> listener)
+			throws AbortOperation {
+		final SelectionListener<T> selectionListener = new SelectionListener<T>() {
+
+			@Override
+			public void select(T object) {
+				columnElement.replaceClassName(Style.UNSELECTED, Style.SELECTED);
+			};
+
+			@Override
+			public void unselect(T object) {
+				columnElement.replaceClassName(Style.SELECTED, Style.UNSELECTED);
+			};
+		};
+		getSelectionTracker().multiSelect(domainObject, selectionListener.append(listener));
+	}
+
 	/**
 	 * @param t
 	 *            the domain object underlying the row
@@ -314,12 +333,24 @@ public abstract class TableBuilder<T> {
 	 *            Add cells to the row
 	 * @param refId
 	 *            TODO
-	 * @param rowNumber TODO
+	 * @param rowNumber
+	 *            TODO
 	 */
 	protected abstract void populateRowCells(T t, HtmlElement row, String refId, int rowNumber);
 
 	public void remove(T domainObject) {
 		// TODO
+	}
+
+	private void scheduleIncrementalTimer(int startIndex, ArrayList<T> items, String refId) {
+		final IncrementalBuilder<T> b = new IncrementalBuilder<T>(this, items, refId, startIndex);
+		final Timer timer = new Timer() {
+			@Override
+			public void run() {
+				b.build();
+			}
+		};
+		timer.schedule(10);
 	}
 
 	public void setContents(ArrayList<T> allObjects) {
@@ -329,6 +360,25 @@ public abstract class TableBuilder<T> {
 	public void setFilter(Filter<T> filter) {
 		this.filter = filter;
 	}
+
+	public void setIncrementalBuilder(IncrementalBuilder<T> incrementalBuilder) {
+		this.incrementalBuilder = incrementalBuilder;
+	}
+
+	public void setUseIncrementalBuild(boolean b) {
+		if (b) {
+			logInfo("Use incremental build: " + b);
+		} else {
+			cancelIncrementalBuilder();
+			logInfo("Use incremental build: " + b);
+		}
+		useIncrementalBuild = false;
+		updateView();
+	}
+
+	// public static native String getUserAgent() /*-{
+	// return navigator.userAgent.toLowerCase();
+	// }-*/;
 
 	/**
 	 * Use for single selection. Select an object, unselect any current
@@ -341,19 +391,22 @@ public abstract class TableBuilder<T> {
 	 * @return the previous selection, or null if none
 	 * @throws AbortOperation
 	 */
-	public void singleSelect(final Element columnElement, final T domainObject,
-			SelectionListener<T> listener) throws AbortOperation {
+	public void singleSelect(final Element columnElement, final T domainObject, SelectionListener<T> listener)
+			throws AbortOperation {
 		final SelectionListener<T> selectionListener = new SelectionListener<T>() {
+			@Override
 			public void select(T object) {
 				columnElement.removeClassName(Style.UNSELECTED);
 				columnElement.addClassName(Style.SELECTED);
 			}
+
+			@Override
 			public void unselect(T object) {
 				try {
 					final Element existingCell = findRowElement(object).getFirstChildElement();
 					existingCell.removeClassName(Style.SELECTED);
 					existingCell.addClassName(Style.UNSELECTED);
-				} catch (NotFound e) {
+				} catch (final NotFound e) {
 				}
 			};
 		};
@@ -374,57 +427,17 @@ public abstract class TableBuilder<T> {
 
 	}
 
-	/**
-	 * register or unregister the selection, and update CSS selection
-	 * 
-	 * @param columnElement
-	 * @param domainObject
-	 * @param listener
-	 *            TODO
-	 * @return
-	 * @throws AbortOperation
-	 */
-	public void multiSelect(final Element columnElement, final T domainObject,
-			SelectionListener<T> listener) throws AbortOperation {
-		final SelectionListener<T> selectionListener = new SelectionListener<T>() {
-
-			public void select(T object) {
-				columnElement.replaceClassName(Style.UNSELECTED, Style.SELECTED);
-			};
-
-			public void unselect(T object) {
-				columnElement.replaceClassName(Style.SELECTED, Style.UNSELECTED);
-			};
-		};
-		getSelectionTracker().multiSelect(domainObject, selectionListener.append(listener));
-	}
+	// {
+	// final String userAgent = getUserAgent();
+	// logInfo(userAgent);
+	// if (userAgent != null && userAgent.indexOf("msie 7") >= 0) {
+	// logError("Turned off incremental builder for msie 7");
+	// useIncrementalBuild = false;
+	// }
+	// }
 
 	public void updateView() {
 		getContainingElement().clear();
 		getContainingElement().getElement().setInnerHTML(getHtml());
 	}
-	boolean useIncrementalBuild = true;
-	
-//	{
-//		final String userAgent = getUserAgent();
-//		logInfo(userAgent);
-//		if (userAgent != null && userAgent.indexOf("msie 7") >= 0) {
-//			logError("Turned off incremental builder for msie 7");
-//			useIncrementalBuild = false;
-//		}
-//	}
-	
-	public void setUseIncrementalBuild(boolean b) {
-		if (b) {
-			logInfo("Use incremental build: " + b);
-		} else {
-			cancelIncrementalBuilder();
-			logInfo("Use incremental build: " + b);
-		}
-		useIncrementalBuild = false;
-		updateView();
-	}
-//	public static native String getUserAgent() /*-{
-//	return navigator.userAgent.toLowerCase();
-//	}-*/;
 }

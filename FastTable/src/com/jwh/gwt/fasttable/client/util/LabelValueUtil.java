@@ -2,7 +2,6 @@ package com.jwh.gwt.fasttable.client.util;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import com.jwh.gwt.fasttable.client.element.HtmlFactory;
 import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
@@ -21,15 +20,11 @@ public class LabelValueUtil {
 
 	final HashMap<String, String> preparedAttributes = new HashMap<String, String>();
 
-	/**
-	 * Experimental. Prepare some attributes to be consumed by the subsequent
-	 * widget created. Only implemented for button so far.
-	 * 
-	 * @param key
-	 * @param value
-	 */
-	public void prepareAttribute(String key, String value) {
-		preparedAttributes.put(key, value);
+	private void applyPreparedAttributes(HtmlElement cell) {
+		for (final Entry<String, String> entry : preparedAttributes.entrySet()) {
+			cell.addAttribute(entry.getKey(), entry.getValue());
+		}
+		preparedAttributes.clear();
 	}
 
 	/**
@@ -63,32 +58,6 @@ public class LabelValueUtil {
 		cell.addContents(label);
 		return id;
 	}
-	
-	/**
-	 * @param label
-	 *            Text shown on the button
-	 * @return the id (for DOM access)
-	 */
-	public String radioButton(String group, String value, String label, boolean selected) {
-		final String id = IdGenerator.getNextId();
-		final HtmlElement cell = newCell().setId(id).setStyle(Style.RADIO_BUTTON, Style.BORDER_NONE);
-		cell.addAttribute("type", "radio");
-		cell.addAttribute("name", group);
-		cell.addAttribute("value", value);
-		if (selected) {
-			cell.addAttribute("checked", "checked");
-		}
-		applyPreparedAttributes(cell);
-		cell.addContents(label);
-		return id;
-	}
-
-	private void applyPreparedAttributes(HtmlElement cell) {
-		for (Entry<String, String> entry : preparedAttributes.entrySet()) {
-			cell.addAttribute(entry.getKey(), entry.getValue());
-		}
-		preparedAttributes.clear();
-	}
 
 	private HtmlElement getCurrentRow() {
 		if (currentRow == null) {
@@ -119,6 +88,36 @@ public class LabelValueUtil {
 
 	public void newRow() {
 		currentRow = table.addChild(Tag.tr);
+	}
+
+	/**
+	 * Experimental. Prepare some attributes to be consumed by the subsequent
+	 * widget created. Only implemented for button so far.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void prepareAttribute(String key, String value) {
+		preparedAttributes.put(key, value);
+	}
+
+	/**
+	 * @param label
+	 *            Text shown on the button
+	 * @return the id (for DOM access)
+	 */
+	public String radioButton(String group, String value, String label, boolean selected) {
+		final String id = IdGenerator.getNextId();
+		final HtmlElement cell = newCell().setId(id).setStyle(Style.RADIO_BUTTON, Style.BORDER_NONE);
+		cell.addAttribute("type", "radio");
+		cell.addAttribute("name", group);
+		cell.addAttribute("value", value);
+		if (selected) {
+			cell.addAttribute("checked", "checked");
+		}
+		applyPreparedAttributes(cell);
+		cell.addContents(label);
+		return id;
 	}
 
 	public String toHtml() {

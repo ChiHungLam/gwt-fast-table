@@ -17,7 +17,7 @@ public class RecycleBin<T> {
 			final T answer = contents[index];
 			contents[index++] = null;
 			return answer;
-		} catch (IndexOutOfBoundsException e) {
+		} catch (final IndexOutOfBoundsException e) {
 			throw new NotFound();
 		}
 	}
@@ -26,7 +26,7 @@ public class RecycleBin<T> {
 		try {
 			index--;
 			contents[index] = recycled;
-		} catch (IndexOutOfBoundsException e) {
+		} catch (final IndexOutOfBoundsException e) {
 			index++;
 		}
 	}
