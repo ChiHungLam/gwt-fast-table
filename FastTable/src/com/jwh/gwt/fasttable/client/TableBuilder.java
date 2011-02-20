@@ -198,6 +198,9 @@ public abstract class TableBuilder<T> {
 				break;
 			}
 		}
+		if (!useIncrementalBuild) {
+			logInfo("Finished building rows");
+		}
 		tbody.cleanup();
 	}
 
@@ -402,9 +405,18 @@ public abstract class TableBuilder<T> {
 	}
 	boolean useIncrementalBuild = true;
 	
+//	{
+//		final String userAgent = getUserAgent();
+//		logInfo(userAgent);
+//		if (userAgent != null && userAgent.indexOf("msie 7") >= 0) {
+//			logError("Turned off incremental builder for msie 7");
+//			useIncrementalBuild = false;
+//		}
+//	}
+	
 	public void setUseIncrementalBuild(boolean b) {
 		if (b) {
-			logError("Use incremental build: " + b);
+			logInfo("Use incremental build: " + b);
 		} else {
 			cancelIncrementalBuilder();
 			logInfo("Use incremental build: " + b);
@@ -412,4 +424,7 @@ public abstract class TableBuilder<T> {
 		useIncrementalBuild = false;
 		updateView();
 	}
+//	public static native String getUserAgent() /*-{
+//	return navigator.userAgent.toLowerCase();
+//	}-*/;
 }
