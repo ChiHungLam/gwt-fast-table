@@ -41,5 +41,8 @@ public interface Style {
 	static final String DROP_PANEL = "dropPanel";
 	static final String LOG_ERROR = "logError";
 	static final String LOG_SUCCESS = "logSuccess";
+	static final String RADIO_BUTTON = "radioButton";
+	static final String CHECK_BOX = "checkBox";
+	static final String NO_WRAP = "noWrap";
 
 }

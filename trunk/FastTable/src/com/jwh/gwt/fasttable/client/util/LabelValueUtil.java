@@ -45,6 +45,44 @@ public class LabelValueUtil {
 		return id;
 	}
 
+	/**
+	 * @param label
+	 *            Text shown on the button
+	 * @return the id (for DOM access)
+	 */
+	public String checkBox(String group, String value, String label, boolean selected) {
+		final String id = IdGenerator.getNextId();
+		final HtmlElement cell = newCell().setId(id).setStyle(Style.CHECK_BOX, Style.BORDER_NONE);
+		cell.addAttribute("type", "checkbox");
+		cell.addAttribute("name", group);
+		cell.addAttribute("value", value);
+		if (selected) {
+			cell.addAttribute("checked", "checked");
+		}
+		applyPreparedAttributes(cell);
+		cell.addContents(label);
+		return id;
+	}
+	
+	/**
+	 * @param label
+	 *            Text shown on the button
+	 * @return the id (for DOM access)
+	 */
+	public String radioButton(String group, String value, String label, boolean selected) {
+		final String id = IdGenerator.getNextId();
+		final HtmlElement cell = newCell().setId(id).setStyle(Style.RADIO_BUTTON, Style.BORDER_NONE);
+		cell.addAttribute("type", "radio");
+		cell.addAttribute("name", group);
+		cell.addAttribute("value", value);
+		if (selected) {
+			cell.addAttribute("checked", "checked");
+		}
+		applyPreparedAttributes(cell);
+		cell.addContents(label);
+		return id;
+	}
+
 	private void applyPreparedAttributes(HtmlElement cell) {
 		for (Entry<String, String> entry : preparedAttributes.entrySet()) {
 			cell.addAttribute(entry.getKey(), entry.getValue());

@@ -2,6 +2,7 @@ package com.jwh.gwt.fasttable.client;
 
 import java.util.ArrayList;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
@@ -62,14 +63,15 @@ public class IncrementalBuilder<T> {
 		final Element previousTBody = getPreviousTBody();
 		if (!cancelled && previousTBody == null && scheduleWaitCount < 30) {
 			tableBuilder.logInfo("waiting to insert " + scheduleWaitCount);
-			final Timer timer = new Timer() {
+			final Scheduler.ScheduledCommand command = new Scheduler.ScheduledCommand() {
+				
 				@Override
-				public void run() {
+				public void execute() {
 					IncrementalBuilder.this.scheduleInsert();
 				}
 			};
 			scheduleWaitCount++;
-			timer.schedule(50);
+			Scheduler.get().scheduleDeferred(command);
 		} else {
 			if (cancelled) {
 				tableBuilder.logInfo("Incremental insert cancelled - " + startIndex);
