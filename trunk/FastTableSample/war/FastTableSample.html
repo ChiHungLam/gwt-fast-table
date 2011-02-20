@@ -45,17 +45,19 @@
 
     <table class="borderNone" >
       <tr class="borderNone">
-        <td class="borderNone" style="font-weight:bold;">[Beta] Experimental API to build full-featured, fast-rendering large tables, while providing full access to the underlying domain objects and DOM elements</td>        
+        <td colSpan="2" class="borderNone" style="font-weight:bold;">[Beta] Experimental API to build full-featured, fast-rendering large tables, while providing full access to the underlying domain objects and DOM elements</td>        
       </tr>
       <tr class="borderNone">
-        <td class="borderNone"><div id="helpContainer">
-        When the page is loaded, 1000 simple domain objects are generated and displayed. To evaluate performance, sort by clicking a column header. To demonstrate cell-level event handling, mouse over "Name" or "Zip" cells. Select a row by clicking "Name" or "Zip" -- the resulting drop panel demonstrates that we have access to the underlying domain object and DOM structure. Clicking the drop panel "OK" button exhibits the smooth integration of "setInnerHtml()" and standard GWT widget technologies.</div></td>
+        <td rowSpan="4" class="borderNone sampleLeftColumn" valign="top" ><div id="tableContainer"> </div></td>
+        <td class="borderNone" ><div id="optionsContainer"> </div></td>
       </tr>
       <tr class="borderNone">
-        <td class="borderNone"><div id="tableContainer"> </div></td>
+        <td class="borderNone sampleRightColumn" ><div id="loggerContainer"> </div></td>
       </tr>
-      <tr class="borderNone">
-        <td class="borderNone"><div id="loggerContainer"> </div></td>
+      <tr class="borderNone">        
+      	<td class="borderNone sampleRightColumn" valign="top" ><div id="helpContainer" style="background-color: #FFFF99;padding:1em;border-color: black;" >When the page is loaded, 100 simple domain objects are generated and displayed. To evaluate performance, sort by clicking a column header. To demonstrate cell-level event handling, mouse over "Name" or "Zip" cells. Select a row by clicking "Name" or "Zip" -- the resulting drop panel demonstrates that we have access to the underlying domain object and DOM structure. Clicking the drop panel "OK" button exhibits the smooth integration of "setInnerHtml()" and standard GWT widget technologies.</div></td>
+      </tr>
+      <tr class="borderNone">        
       </tr>
     </table>
   </body>

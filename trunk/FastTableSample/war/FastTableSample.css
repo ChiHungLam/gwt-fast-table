@@ -208,6 +208,31 @@ tfoot {
 .logError {
 	color: red;
 }
+
 .logSuccess {
-	color: green;;
+	color: green;
+}
+
+.radioButton {
+	
+}
+
+.checkBox {
+	
+}
+
+.noWrap {
+	white-space: nowrap;
+}
+
+.sampleLeftColumn {
+	min-width: 70%;
+	vertical-align: top;
+	text-align: left;
+}
+
+.sampleRightColumn {
+	max-width: 30%;
+	vertical-align: top;
+	text-align: left;
 }
