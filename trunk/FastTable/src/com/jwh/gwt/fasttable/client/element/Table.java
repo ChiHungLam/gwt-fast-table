@@ -12,9 +12,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.jwh.gwt.fasttable.client.CellEvent;
+import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
-import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
 import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
@@ -57,10 +57,6 @@ public class Table<T> {
 		root.setStyle(Style.BORDER_NONE);
 	}
 
-	public HtmlElement getRoot() {
-		return root;
-	}
-	
 	/**
 	 * A little magic happens here. All cell event handlers call a function
 	 * named "fnct"[+digit]. Because GWT will obfuscate function names, we must
@@ -115,6 +111,10 @@ public class Table<T> {
 			}
 		}
 		throw new NotFound();
+	}
+
+	public HtmlElement getRoot() {
+		return root;
 	}
 
 	/**
