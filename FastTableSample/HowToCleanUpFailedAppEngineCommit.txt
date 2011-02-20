@@ -1,0 +1,7 @@
+Open command window at 
+
+*YOUR_WORKSPACE_PATH*\eclipse\plugins\com.google.appengine.eclipse.sdkbundle.*CURRENT_APP_ENGINE*\appengine-java-sdk-*CURRENT_SDK*\bin
+
+Run:
+
+appcfg rollback *YOUR_WORKSPACE_PATH*\FastTableSample\war\WEB-INF\appengine-web.xml
