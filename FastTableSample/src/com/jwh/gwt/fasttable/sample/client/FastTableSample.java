@@ -9,18 +9,28 @@ package com.jwh.gwt.fasttable.sample.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.ScrollEvent;
+import com.google.gwt.user.client.Window.ScrollHandler;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.jwh.gwt.fasttable.client.CellEvent;
@@ -54,6 +64,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 	@Deprecated
 	private Label help;
 	private VerticalPanel logger;
+	private RootPanel optionsPanel;
 
 	private CellListener<SampleModel> buildCellListener() {
 		return new CellListener<SampleModel>() {
@@ -219,14 +230,14 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			}
 
 			public void logError(String message) {
-				final Label entry = new Label(message);
+				final Label entry = new Label(new Date() + " - " + message);
 				entry.addStyleName(LOG_ERROR);
 				entry.removeStyleName(LOG_SUCCESS);
 				logger.add(entry);
 			};
 
 			public void logInfo(String message) {
-				final Label entry = new Label(message);
+				final Label entry = new Label(new Date() + " - " + message);
 				entry.removeStyleName(LOG_ERROR);
 				entry.addStyleName(LOG_SUCCESS);
 				logger.add(entry);
@@ -237,11 +248,12 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				row.setStyle(rowNumber % 2 == 0 ? Style.EVEN : Style.ODD);
 				row.addHandler(getCellHandler(), refId, 0);
 				row.addChild(Tag.td).setStyle(NAME, CURSOR_POINTER, UNSELECTED).addContents(t.name);
-				row.addChild(Tag.td).setStyle(BORDER_OPEN_RIGHT).addContents(t.street);
+				row.addChild(Tag.td).setStyle(BORDER_OPEN_RIGHT, NO_WRAP).addContents(t.street);
 				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT_RIGHT).addContents(t.city);
 				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT).addContents(t.state);
 				row.addChild(Tag.td).setStyle(BORDER).addContents(t.zip);
 				row.addChild(Tag.td).setStyle(BORDER_OPEN_LEFT).addContents(String.valueOf(t.sequenceNumber));
+				listenForFinishedBuilding = true;
 			}
 
 			@Override
@@ -252,17 +264,130 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			}
 
 		};
-		builder.setContents(SampleModel.getSamples(1000));
+		showSamples();
+	}
+
+	private void showSamples() {
+		logger.clear();
+		builder.logInfo("Start building samples");
+		final ArrayList<SampleModel> samples = SampleModel.getSamples(sampleRowCount);
+		builder.logInfo("Set table contents");
+		builder.setContents(samples);
 		builder.updateView();
 	}
 
+	int sampleRowCount = 100;
+	boolean listenForFinishedBuilding = false;
+	
 	@Override
-	public void onModuleLoad() {
+	public void onModuleLoad() {		
+		//TODO need better switch
+		if (Window.Location.getHref().indexOf("FastTableSample") < 0 && Window.Location.getHref().indexOf("fast-table-sample") < 0) {
+			return;
+		}
 		tablePanel = RootPanel.get("tableContainer");
-		help = new Label();
-		RootPanel.get("helpContainer").add(help);
+		optionsPanel = RootPanel.get("optionsContainer");
 		logger = new VerticalPanel();
+		Window.addWindowScrollHandler(new ScrollHandler() {			
+			@Override
+			public void onWindowScroll(ScrollEvent event) {
+				if (listenForFinishedBuilding) {
+					builder.logInfo("Scrolled. Done drawing?");
+				}
+				listenForFinishedBuilding = false;
+			}
+		});
 		RootPanel.get("loggerContainer").add(logger);
+		buildOptionsPanel();
 		buildTable();
+	}
+
+	private void buildOptionsPanel() {
+		final VerticalPanel verticalPanel = new VerticalPanel();
+		optionsPanel.add(verticalPanel);
+		buildRowCountButtons(verticalPanel);
+		buildIncrementalCheckbox(verticalPanel);
+		final PushButton refreshButton = new PushButton("Refresh Table");
+		refreshButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				showSamples();
+			}
+		});
+		refreshButton.addStyleName(BUTTON);
+		refreshButton.addStyleName(CURSOR_POINTER);
+		verticalPanel.add(refreshButton);
+	}
+
+	private void buildIncrementalCheckbox(VerticalPanel verticalPanel) {
+		final CheckBox checkbox = new CheckBox("Build Rows Incrementally");
+		checkbox.setValue(true, false);
+		checkbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				builder.setUseIncrementalBuild(event.getValue());
+			}
+		});
+		verticalPanel.add(checkbox);
+		checkbox.getElement().getParentElement().addClassName(BORDER_NONE);
+	}
+
+	private void buildRowCountButtons(VerticalPanel verticalPanel) {
+		final String rows10 = "10 rows";
+		final String rows100 = "100 rows";
+		final String rows500 = "500 rows";
+		final String rows1000 = "1000 rows";
+		final String rowsToBuild = "rowsToBuild";
+		final ValueChangeHandler<Boolean> handler = new ValueChangeHandler<Boolean>() {				
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				RadioButton selected = (RadioButton) event.getSource();
+				if (rows10.equals(selected.getFormValue())) {
+					sampleRowCount = 10;
+				} else if (rows100.equals(selected.getFormValue())) {
+					sampleRowCount = 100;
+				} else if (rows500.equals(selected.getFormValue())) {
+					sampleRowCount = 500;
+				} else {
+					sampleRowCount = 1000;
+				}
+			}
+		};
+		{
+			final RadioButton radio = new RadioButton(rowsToBuild);
+			radio.setHTML(rows10);
+			radio.setValue(false, false);
+			radio.setFormValue(rows10);
+			radio.addValueChangeHandler(handler);
+			verticalPanel.add(radio);
+			radio.getElement().getParentElement().addClassName(BORDER_NONE);
+		}
+		{
+			final RadioButton radio = new RadioButton(rowsToBuild);
+			radio.setHTML(rows100);
+			radio.setValue(true, false);
+			radio.setFormValue(rows100);
+			radio.addValueChangeHandler(handler);
+			verticalPanel.add(radio);
+			radio.getElement().getParentElement().addClassName(BORDER_NONE);
+		}
+		{
+			final RadioButton radio = new RadioButton(rowsToBuild);
+			radio.setHTML(rows500);
+			radio.setValue(false, false);
+			radio.setFormValue(rows500);
+			radio.addValueChangeHandler(handler);
+			verticalPanel.add(radio);
+			radio.getElement().getParentElement().addClassName(BORDER_NONE);
+		}
+		{
+			final RadioButton radio = new RadioButton(rowsToBuild);
+			radio.setHTML(rows1000);
+			radio.setValue(false, false);
+			radio.setFormValue(rows1000);
+			radio.addValueChangeHandler(handler);
+			verticalPanel.add(radio);
+			radio.getElement().getParentElement().addClassName(BORDER_NONE);
+		}
 	}
 }
