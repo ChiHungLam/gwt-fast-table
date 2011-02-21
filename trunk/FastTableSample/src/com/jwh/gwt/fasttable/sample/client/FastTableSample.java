@@ -9,7 +9,6 @@ package com.jwh.gwt.fasttable.sample.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
@@ -27,7 +26,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.ScrollEvent;
 import com.google.gwt.user.client.Window.ScrollHandler;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -44,6 +42,7 @@ import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
 import com.jwh.gwt.fasttable.client.util.LabelValueUtil;
+import com.jwh.gwt.fasttable.client.util.Logger;
 import com.jwh.gwt.fasttable.client.util.Style;
 
 /**
@@ -61,9 +60,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 	private static final String COLUMN_STREET = "Street";
 	private RootPanel tablePanel;
 	private TableBuilder<SampleModel> builder;
-	@Deprecated
-	private Label help;
-	private VerticalPanel logger;
+	final Logger logger = new Logger();
 	private RootPanel optionsPanel;
 
 	private CellListener<SampleModel> buildCellListener() {
@@ -230,17 +227,11 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			}
 
 			public void logError(String message) {
-				final Label entry = new Label(new Date() + " - " + message);
-				entry.addStyleName(LOG_ERROR);
-				entry.removeStyleName(LOG_SUCCESS);
-				logger.add(entry);
+				logger.logError(message);
 			};
 
 			public void logInfo(String message) {
-				final Label entry = new Label(new Date() + " - " + message);
-				entry.removeStyleName(LOG_ERROR);
-				entry.addStyleName(LOG_SUCCESS);
-				logger.add(entry);
+				logger.logInfo(message);
 			};
 
 			@Override
@@ -287,7 +278,6 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 		}
 		tablePanel = RootPanel.get("tableContainer");
 		optionsPanel = RootPanel.get("optionsContainer");
-		logger = new VerticalPanel();
 		Window.addWindowScrollHandler(new ScrollHandler() {			
 			@Override
 			public void onWindowScroll(ScrollEvent event) {
@@ -297,7 +287,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 				listenForFinishedBuilding = false;
 			}
 		});
-		RootPanel.get("loggerContainer").add(logger);
+		logger.setParent(RootPanel.get("loggerContainer"));
 		buildOptionsPanel();
 		buildTable();
 	}
@@ -308,6 +298,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 		buildRowCountButtons(verticalPanel);
 		buildIncrementalCheckbox(verticalPanel);
 		final PushButton refreshButton = new PushButton("Refresh Table");
+		refreshButton.setTitle("Build new sample objects and update the table, using options specified above");
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -321,11 +312,15 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 
 	private void buildIncrementalCheckbox(VerticalPanel verticalPanel) {
 		final CheckBox checkbox = new CheckBox("Build Rows Incrementally");
-		checkbox.setValue(true, false);
+		checkbox.setTitle("When checked, build the rows small chunks, instead of all at once");
+		checkbox.setValue(false, false);
 		checkbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {			
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				builder.setUseIncrementalBuild(event.getValue());
+				builder.setUseIncrementalBuild(event.getValue(), false);
+				if (!builder.isIncrementalBuilderSupported()) {
+					logger.logError("Incremental row builder is not reliable on IE7/8");
+				}
 			}
 		});
 		verticalPanel.add(checkbox);
