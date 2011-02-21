@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.DOM;
 import com.jwh.gwt.fasttable.client.element.HtmlFactory;
 import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
@@ -96,18 +97,13 @@ public class IncrementalBuilder<T> {
 		return tableBuilder.getDocument().getElementById(refId);
 	}
 
-	private void insertHtml() {
-		final Document document = Document.get();
-		final Element lastItem = document.getElementById(refId);
-		final com.google.gwt.user.client.Element tBody = DOM.createTBody();
-		tBody.setId(myId);
+	private void insertHtml(Node previousTBody, Node tBody) {
 		try {
-			lastItem.getParentNode().insertAfter(tBody, lastItem);
-			tBody.setInnerHTML(html);
+			previousTBody.getParentNode().insertAfter(tBody, previousTBody);
 		} catch (final Exception e) {
 			// for IE
 			tableBuilder.logError("Error inserting html: " + e.getMessage());
-			tableBuilder.setUseIncrementalBuild(false);
+			tableBuilder.setUseIncrementalBuild(false, true);
 			return;
 		}
 		if (cancelled) {
@@ -136,7 +132,10 @@ public class IncrementalBuilder<T> {
 			} else {
 				if (previousTBody != null) {
 					tableBuilder.logInfo("inserting html - " + startIndex);
-					insertHtml();
+					final com.google.gwt.user.client.Element tBody = DOM.createTBody();
+					tBody.setId(myId);
+					tBody.setInnerHTML(html);
+					insertHtml(previousTBody, tBody);
 				} else {
 					tableBuilder.logError("Abandoning insert, waited too long - " + startIndex);
 				}

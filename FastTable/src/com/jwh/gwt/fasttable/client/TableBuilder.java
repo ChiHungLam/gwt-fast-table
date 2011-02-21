@@ -121,7 +121,7 @@ public abstract class TableBuilder<T> {
 
 	public Table<T> table = new Table<T>();
 
-	boolean useIncrementalBuild = true;
+	public boolean useIncrementalBuild = false;
 
 	public void add(T domainObject, Position position) {
 		// TODO
@@ -365,20 +365,22 @@ public abstract class TableBuilder<T> {
 		this.incrementalBuilder = incrementalBuilder;
 	}
 
-	public void setUseIncrementalBuild(boolean b) {
+	public void setUseIncrementalBuild(boolean b, boolean updateView) {
+		useIncrementalBuild = b;
 		if (b) {
-			logInfo("Use incremental build: " + b);
+			logInfo("Use incremental build: " + useIncrementalBuild);
 		} else {
 			cancelIncrementalBuilder();
-			logInfo("Use incremental build: " + b);
+			logInfo("Use incremental build: " + useIncrementalBuild);
 		}
-		useIncrementalBuild = false;
-		updateView();
+		if (updateView) {
+			updateView();
+		}
 	}
 
-	// public static native String getUserAgent() /*-{
-	// return navigator.userAgent.toLowerCase();
-	// }-*/;
+	public static native String getUserAgent() /*-{
+		return navigator.userAgent.toLowerCase();
+	}-*/;
 
 	/**
 	 * Use for single selection. Select an object, unselect any current
@@ -427,14 +429,14 @@ public abstract class TableBuilder<T> {
 
 	}
 
-	// {
-	// final String userAgent = getUserAgent();
-	// logInfo(userAgent);
-	// if (userAgent != null && userAgent.indexOf("msie 7") >= 0) {
-	// logError("Turned off incremental builder for msie 7");
-	// useIncrementalBuild = false;
-	// }
-	// }
+	public boolean isIncrementalBuilderSupported() {
+		final String userAgent = getUserAgent();
+		logInfo(userAgent);
+		if (userAgent != null && userAgent.indexOf("msie") >= 0) {
+			return false;
+		}
+		return true;
+	}
 
 	public void updateView() {
 		getContainingElement().clear();
