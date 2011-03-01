@@ -37,7 +37,7 @@ public class CellEvent<T> {
 			currentElement = currentElement.getNextSiblingElement();
 		}
 		if (answer.isEmpty()) {
-			throw new NotFound();
+			throw NotFound.getInstance();
 		}
 		return answer;
 	}
@@ -45,7 +45,7 @@ public class CellEvent<T> {
 	public Element getColumnElement(Document document) throws NotFound {
 		final ArrayList<Element> all = getAllColumnElements(document);
 		if (column > all.size()) {
-			throw new NotFound();
+			throw NotFound.getInstance();
 		}
 		return all.get(column - 1);
 	}
@@ -71,7 +71,7 @@ public class CellEvent<T> {
 	public Element getRowElement(Document document) throws NotFound {
 		final Element row = document.getElementById(refId);
 		if (row == null) {
-			throw new NotFound();
+			throw NotFound.getInstance();
 		}
 		return row;
 	}
