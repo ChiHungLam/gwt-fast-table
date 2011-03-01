@@ -110,7 +110,7 @@ public class Table<T> {
 				return entry.getKey();
 			}
 		}
-		throw new NotFound();
+		throw NotFound.getInstance();
 	}
 
 	public HtmlElement getRoot() {
