@@ -2,8 +2,22 @@ package com.jwh.gwt.fasttable.client.element;
 
 import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 
+/**
+ * 
+ * Validates the structural integrity of HTML elements
+ * 
+ * Partially implemented
+ * 
+ * @author jheyne
+ *
+ */
 public class Validator {
 
+	/**
+	 * @param parent
+	 * @param child
+	 * @return true if the child tag can be nested in the parent tag
+	 */
 	public static boolean validateChild(Tag parent, Tag child) {
 		switch (parent) {
 		case input:
