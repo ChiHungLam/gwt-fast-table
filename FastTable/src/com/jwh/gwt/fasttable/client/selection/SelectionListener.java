@@ -4,6 +4,10 @@ import com.jwh.gwt.fasttable.client.exception.AbortOperation;
 
 public class SelectionListener<T> {
 
+	/**
+	 * @param object the object that is about to be unselected
+	 * @throws AbortOperation when we are not ready to change the selection (for example, if there are unsaved changes)
+	 */
 	public void aboutToUnselect(T object) throws AbortOperation {
 
 	}
@@ -40,14 +44,23 @@ public class SelectionListener<T> {
 		};
 	}
 
+	/**
+	 * @param object The currently selected object (which is being reselected)
+	 */
 	public void reselect(T object) {
 
 	}
 
+	/**
+	 * @param object The newly selected object
+	 */
 	public void select(T object) {
 
 	}
 
+	/**
+	 * @param object The previously selected objected
+	 */
 	public void unselect(T object) {
 
 	}
