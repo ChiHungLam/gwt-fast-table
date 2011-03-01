@@ -18,7 +18,7 @@ public class RecycleBin<T> {
 			contents[index++] = null;
 			return answer;
 		} catch (final IndexOutOfBoundsException e) {
-			throw new NotFound();
+			throw NotFound.getInstance();
 		}
 	}
 
