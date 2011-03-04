@@ -15,6 +15,8 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -26,6 +28,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.ScrollEvent;
 import com.google.gwt.user.client.Window.ScrollHandler;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -35,6 +40,7 @@ import com.jwh.gwt.fasttable.client.CellEvent;
 import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
 import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
 import com.jwh.gwt.fasttable.client.CellListener;
+import com.jwh.gwt.fasttable.client.IncrementalStrategy;
 import com.jwh.gwt.fasttable.client.TableBuilder;
 import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
 import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
@@ -288,15 +294,75 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			}
 		});
 		logger.setParent(RootPanel.get("loggerContainer"));
-		buildOptionsPanel();
 		buildTable();
+		buildOptionsPanel();
 	}
 
 	private void buildOptionsPanel() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		optionsPanel.add(verticalPanel);
 		buildRowCountButtons(verticalPanel);
-		buildIncrementalCheckbox(verticalPanel);
+		buildIncrementalStrategy(verticalPanel);
+		buildInitialSize(verticalPanel);
+		buildIncrementSize(verticalPanel);
+		buildPushButton(verticalPanel);
+	}
+
+	private void buildIncrementSize(VerticalPanel verticalPanel) {
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		verticalPanel.add(horizontalPanel);
+		horizontalPanel.add(new Label("Increment row count"));
+		final ListBox box = new ListBox();
+		horizontalPanel.add(box);		
+		int selection = builder.configuration.getSubsequentIncrement();
+		Integer[] options = new Integer[] {25, 50, 75, 100, 125, 150, Integer.MAX_VALUE};
+		for (Integer integer : options) {
+			addOption(box, integer, selection);
+		}
+		box.addChangeHandler(new ChangeHandler() {			
+			@Override
+			public void onChange(ChangeEvent event) {
+				int selectedIndex = box.getSelectedIndex();
+				if (selectedIndex >= 0) {
+					Integer increment = Integer.valueOf(box.getValue(selectedIndex));
+					builder.configuration.subsequentIncrement = increment;
+				}				
+			}
+		});
+	}
+
+	private void addOption(ListBox box, Integer integer, int selection) {
+		box.addItem(String.valueOf(integer));
+		if (selection == integer) {
+			box.setSelectedIndex(box.getItemCount() - 1);
+		}		
+	}
+
+	private void buildInitialSize(VerticalPanel verticalPanel) {
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		verticalPanel.add(horizontalPanel);
+		horizontalPanel.add(new Label("Initial increment row count"));
+		final ListBox box = new ListBox();
+		horizontalPanel.add(box);		
+		int selection = builder.configuration.getInitialIncrement();
+		Integer[] options = new Integer[] {25, 50, 75, 100, 125, 150, Integer.MAX_VALUE};
+		for (Integer integer : options) {
+			addOption(box, integer, selection);
+		}
+		box.addChangeHandler(new ChangeHandler() {			
+			@Override
+			public void onChange(ChangeEvent event) {
+				int selectedIndex = box.getSelectedIndex();
+				if (selectedIndex >= 0) {
+					Integer increment = Integer.valueOf(box.getValue(selectedIndex));
+					builder.configuration.initialIncrement = increment;
+				}				
+			}
+		});
+	}
+
+	private void buildPushButton(final VerticalPanel verticalPanel) {
+		verticalPanel.add(new Label());
 		final PushButton refreshButton = new PushButton("Refresh Table");
 		refreshButton.setTitle("Build new sample objects and update the table, using options specified above");
 		refreshButton.addClickHandler(new ClickHandler() {
@@ -310,28 +376,59 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 		verticalPanel.add(refreshButton);
 	}
 
-	private void buildIncrementalCheckbox(VerticalPanel verticalPanel) {
-		final CheckBox checkbox = new CheckBox("Build Rows Incrementally");
-		checkbox.setTitle("When checked, build the rows small chunks, instead of all at once");
-		checkbox.setValue(false, false);
-		checkbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {			
+	private void buildIncrementalStrategy(VerticalPanel verticalPanel) {
+		verticalPanel.add(new Label());
+		final String none = "Turn off incremental builder";
+		final String replace = "Replace original rows with incremental rows";			
+		final String append = "Append incremental rows";
+		final ValueChangeHandler<Boolean> handler = new ValueChangeHandler<Boolean>() {	
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				builder.setUseIncrementalBuild(event.getValue(), false);
-				if (!builder.isIncrementalBuilderSupported()) {
-					logger.logError("Incremental row builder is not reliable on IE7/8");
-				}
+				RadioButton selected = (RadioButton) event.getSource();
+				if (none.equals(selected.getFormValue())) {
+					builder.configuration.incrementalStrategy = IncrementalStrategy.NONE;
+				} else if (replace.equals(selected.getFormValue())) {
+					builder.configuration.incrementalStrategy = IncrementalStrategy.REPLACE;
+				} else if (append.equals(selected.getFormValue())) {
+					builder.configuration.incrementalStrategy = IncrementalStrategy.APPEND;
+				} 
 			}
-		});
-		verticalPanel.add(checkbox);
-		checkbox.getElement().getParentElement().addClassName(BORDER_NONE);
+		};
+		final String incrementalStrategy = "incrementalStrategy";
+		{
+			final RadioButton radio = new RadioButton(incrementalStrategy);
+			radio.setHTML(none);
+			radio.setValue(builder.configuration.incrementalStrategy == IncrementalStrategy.NONE, false);
+			radio.setFormValue(none);
+			radio.addValueChangeHandler(handler);
+			verticalPanel.add(radio);
+			radio.getElement().getParentElement().addClassName(BORDER_NONE);
+		}
+		{
+			final RadioButton radio = new RadioButton(incrementalStrategy);
+			radio.setHTML(append);
+			radio.setValue(builder.configuration.incrementalStrategy == IncrementalStrategy.APPEND, false);
+			radio.setFormValue(append);
+			radio.addValueChangeHandler(handler);
+			verticalPanel.add(radio);
+			radio.getElement().getParentElement().addClassName(BORDER_NONE);
+		}
+		{
+			final RadioButton radio = new RadioButton(incrementalStrategy);
+			radio.setHTML(replace);
+			radio.setValue(builder.configuration.incrementalStrategy == IncrementalStrategy.REPLACE, false);
+			radio.setFormValue(replace);
+			radio.addValueChangeHandler(handler);
+			verticalPanel.add(radio);
+			radio.getElement().getParentElement().addClassName(BORDER_NONE);
+		}
 	}
 
 	private void buildRowCountButtons(VerticalPanel verticalPanel) {
-		final String rows10 = "10 rows";
-		final String rows100 = "100 rows";
-		final String rows500 = "500 rows";
-		final String rows1000 = "1000 rows";
+		final String rows10 = "10 sample rows";
+		final String rows100 = "100 sample rows";
+		final String rows500 = "500 sample rows";
+		final String rows1000 = "1000 sample rows";
 		final String rowsToBuild = "rowsToBuild";
 		final ValueChangeHandler<Boolean> handler = new ValueChangeHandler<Boolean>() {				
 			@Override
