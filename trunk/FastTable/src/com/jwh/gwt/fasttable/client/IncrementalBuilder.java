@@ -23,8 +23,6 @@ public class IncrementalBuilder<T> {
 
 	boolean cancelled = false;
 
-	final static int buildCount = 50;
-
 	final int startIndex;
 
 	final TableBuilder<T> tableBuilder;
@@ -60,14 +58,15 @@ public class IncrementalBuilder<T> {
 	 * Create a new incremental builder if there are any items remaining
 	 */
 	private void buildRemainingItems() {
-		if (lastId == null || startIndex + buildCount >= items.size()) {
+		final int subsequentIncrement = tableBuilder.configuration.getSubsequentIncrement();
+		if (lastId == null || startIndex + subsequentIncrement >= items.size()) {
 			cleanup();
 			return;
 		}
 		if (cancelled) {
 			return;
 		}
-		new IncrementalBuilder<T>(tableBuilder, items, myId, startIndex + buildCount).build();
+		new IncrementalBuilder<T>(tableBuilder, items, myId, startIndex + subsequentIncrement).build();
 	}
 
 	public void cancel() {
@@ -82,7 +81,8 @@ public class IncrementalBuilder<T> {
 
 	private void generateHtml() {
 		final HtmlElement tbody = HtmlFactory.forRoot(Tag.tbody);
-		for (int i = startIndex; i < Math.min(items.size(), startIndex + buildCount); i++) {
+		final int subsequentIncrement = tableBuilder.configuration.getSubsequentIncrement();
+		for (int i = startIndex; i < Math.min(items.size(), startIndex + subsequentIncrement); i++) {
 			final T object = items.get(i);
 			final HtmlElement row = tbody.addChild(Tag.tr);
 			lastId = tableBuilder.table.register(object, row);
@@ -99,11 +99,15 @@ public class IncrementalBuilder<T> {
 
 	private void insertHtml(Node previousTBody, Node tBody) {
 		try {
-			previousTBody.getParentNode().insertAfter(tBody, previousTBody);
+			if (tableBuilder.configuration.getIncrementalStrategy() == IncrementalStrategy.APPEND) {
+				previousTBody.getParentNode().insertAfter(tBody, previousTBody);
+			} else {
+				previousTBody.getParentNode().replaceChild(tBody, previousTBody);
+			}
 		} catch (final Exception e) {
 			// for IE
 			tableBuilder.logError("Error inserting html: " + e.getMessage());
-			tableBuilder.setUseIncrementalBuild(false, true);
+			tableBuilder.setUseIncrementalBuild(IncrementalStrategy.NONE, true);
 			return;
 		}
 		if (cancelled) {
