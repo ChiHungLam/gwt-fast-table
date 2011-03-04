@@ -121,8 +121,8 @@ public abstract class TableBuilder<T> {
 
 	public Table<T> table = new Table<T>();
 
-	public boolean useIncrementalBuild = false;
-
+	public Configuration configuration = new Configuration();
+	
 	public void add(T domainObject, Position position) {
 		// TODO
 	}
@@ -174,17 +174,18 @@ public abstract class TableBuilder<T> {
 		final String tbodyId = IdGenerator.getNextId();
 		tbody.setId(tbodyId);
 		int count = 0;
+		boolean isIncrementalBuild = configuration.incrementalStrategy != IncrementalStrategy.NONE;
 		for (final T t : filteredObjects) {
 			final HtmlElement row = tbody.addChild(Tag.tr);
 			final String refId = table.register(t, row);
 			populateRowCells(t, row, refId, count);
 			count++;
-			if (useIncrementalBuild && count >= IncrementalBuilder.buildCount) {
+			if (isIncrementalBuild && count >= configuration.getInitialIncrement()) {
 				scheduleIncrementalTimer(count, new ArrayList<T>(filteredObjects), tbodyId);
 				break;
 			}
 		}
-		if (!useIncrementalBuild) {
+		if (!isIncrementalBuild) {
 			logInfo("Finished building rows");
 		}
 		tbody.cleanup();
@@ -365,13 +366,13 @@ public abstract class TableBuilder<T> {
 		this.incrementalBuilder = incrementalBuilder;
 	}
 
-	public void setUseIncrementalBuild(boolean b, boolean updateView) {
-		useIncrementalBuild = b;
-		if (b) {
-			logInfo("Use incremental build: " + useIncrementalBuild);
+	public void setUseIncrementalBuild(IncrementalStrategy strategy, boolean updateView) {
+		configuration.incrementalStrategy = strategy;
+		if (strategy != IncrementalStrategy.NONE) {
+			logInfo("Use incremental build: " + strategy);
 		} else {
 			cancelIncrementalBuilder();
-			logInfo("Use incremental build: " + useIncrementalBuild);
+			logInfo("Use incremental build: " + strategy);
 		}
 		if (updateView) {
 			updateView();
