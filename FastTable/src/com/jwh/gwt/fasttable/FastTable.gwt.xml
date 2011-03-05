@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='fasttable'>
 	<inherits name='com.google.gwt.user.User' />
+	<inherits name='com.jwh.gwt.html.Html' />
 	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard' /> -->
 	<source path='client' />
   <replace-with class="com.jwh.gwt.fasttable.client.ConfigurationIE">

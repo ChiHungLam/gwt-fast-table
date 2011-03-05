@@ -11,15 +11,16 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.jwh.gwt.fasttable.client.CellEvent;
-import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
-import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
-import com.jwh.gwt.fasttable.client.CellListener;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
-import com.jwh.gwt.fasttable.client.exception.NotFound;
-import com.jwh.gwt.fasttable.client.util.IdGenerator;
 import com.jwh.gwt.fasttable.client.util.Style;
+import com.jwh.gwt.html.shared.Tag;
+import com.jwh.gwt.html.shared.event.CellEvent;
+import com.jwh.gwt.html.shared.event.CellHandlerWrapper;
+import com.jwh.gwt.html.shared.event.CellListener;
+import com.jwh.gwt.html.shared.event.CellEvent.OnEvent;
+import com.jwh.gwt.html.shared.exception.NotFound;
+import com.jwh.gwt.html.shared.util.HtmlFactory;
+import com.jwh.gwt.html.shared.util.HtmlFactory.HtmlElement;
+import com.jwh.gwt.html.shared.util.IdGenerator;
 
 public class Table<T> {
 

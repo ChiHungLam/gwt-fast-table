@@ -3,9 +3,11 @@ package com.jwh.gwt.fasttable.client.util;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import com.jwh.gwt.fasttable.client.element.HtmlFactory;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
+import com.jwh.gwt.html.shared.Attribute;
+import com.jwh.gwt.html.shared.Tag;
+import com.jwh.gwt.html.shared.util.HtmlFactory;
+import com.jwh.gwt.html.shared.util.IdGenerator;
+import com.jwh.gwt.html.shared.util.HtmlFactory.HtmlElement;
 
 /**
  * Utility to quickly layout common GUI elements in an HTML table
@@ -77,7 +79,7 @@ public class LabelValueUtil {
 		final String id = IdGenerator.getNextId();
 		final HtmlElement first = newCell();
 		first.setStyle(Style.LABEL, Style.BORDER_NONE);
-		first.addChild(Tag.label).addAttribute("for", id).setStyle(Style.LABEL).addContents(label).cleanup();
+		first.addChild(Tag.label).addAttribute(Attribute.FOR, id).setStyle(Style.LABEL).addContents(label).cleanup();
 		newCell().setId(id).setStyle(Style.VALUE_READ_ONLY, Style.BORDER_NONE).addContents(value);
 		return id;
 	}

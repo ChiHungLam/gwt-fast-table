@@ -3,14 +3,13 @@ package com.jwh.gwt.fasttable.client;
 import java.util.ArrayList;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.DOM;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
-import com.jwh.gwt.fasttable.client.util.IdGenerator;
+import com.jwh.gwt.html.shared.Tag;
+import com.jwh.gwt.html.shared.util.HtmlFactory;
+import com.jwh.gwt.html.shared.util.IdGenerator;
+import com.jwh.gwt.html.shared.util.HtmlFactory.HtmlElement;
 
 /**
  * Because only a limited number of table elements are available at a time

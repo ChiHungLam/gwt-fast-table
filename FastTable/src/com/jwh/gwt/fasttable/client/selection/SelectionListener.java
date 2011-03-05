@@ -1,6 +1,7 @@
 package com.jwh.gwt.fasttable.client.selection;
 
-import com.jwh.gwt.fasttable.client.exception.AbortOperation;
+import com.jwh.gwt.html.shared.exception.AbortOperation;
+
 
 public class SelectionListener<T> {
 
