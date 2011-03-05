@@ -3,11 +3,11 @@ package com.jwh.gwt.fasttable.sample.client;
 import org.junit.Test;
 
 import com.google.gwt.user.client.ui.Panel;
-import com.jwh.gwt.fasttable.client.CellEvent;
-import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.TableBuilder;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
+import com.jwh.gwt.html.shared.Tag;
+import com.jwh.gwt.html.shared.event.CellEvent;
+import com.jwh.gwt.html.shared.event.CellListener;
+import com.jwh.gwt.html.shared.util.HtmlFactory.HtmlElement;
 
 
 public class TableBuilderTest implements SampleStyle {

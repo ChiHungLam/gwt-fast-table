@@ -27,7 +27,6 @@ import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.ScrollEvent;
 import com.google.gwt.user.client.Window.ScrollHandler;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -36,20 +35,20 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.jwh.gwt.fasttable.client.CellEvent;
-import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
-import com.jwh.gwt.fasttable.client.CellHandlerWrapper;
-import com.jwh.gwt.fasttable.client.CellListener;
 import com.jwh.gwt.fasttable.client.IncrementalStrategy;
 import com.jwh.gwt.fasttable.client.TableBuilder;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
-import com.jwh.gwt.fasttable.client.exception.AbortOperation;
-import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
 import com.jwh.gwt.fasttable.client.util.LabelValueUtil;
 import com.jwh.gwt.fasttable.client.util.Logger;
 import com.jwh.gwt.fasttable.client.util.Style;
+import com.jwh.gwt.html.shared.Tag;
+import com.jwh.gwt.html.shared.event.CellEvent;
+import com.jwh.gwt.html.shared.event.CellHandlerWrapper;
+import com.jwh.gwt.html.shared.event.CellListener;
+import com.jwh.gwt.html.shared.event.CellEvent.OnEvent;
+import com.jwh.gwt.html.shared.exception.AbortOperation;
+import com.jwh.gwt.html.shared.exception.NotFound;
+import com.jwh.gwt.html.shared.util.HtmlFactory.HtmlElement;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
