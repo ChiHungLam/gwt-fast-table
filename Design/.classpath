@@ -7,5 +7,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/FastTable"/>
 	<classpathentry kind="lib" path="E:/Guava/guava-r08-gwt.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Html"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

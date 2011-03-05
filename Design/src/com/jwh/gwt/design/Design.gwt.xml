@@ -3,6 +3,7 @@
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name='com.google.common.collect.Collect' />
+	<inherits name='com.jwh.gwt.html.Html' />
 	<inherits name='com.jwh.gwt.fasttable.FastTable' />
 
 	<!-- Inherit the default GWT style sheet. You can change -->
