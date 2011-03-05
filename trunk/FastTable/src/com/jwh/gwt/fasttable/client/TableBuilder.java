@@ -7,17 +7,20 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Panel;
-import com.jwh.gwt.fasttable.client.CellEvent.OnEvent;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.HtmlElement;
-import com.jwh.gwt.fasttable.client.element.HtmlFactory.Tag;
 import com.jwh.gwt.fasttable.client.element.Table;
-import com.jwh.gwt.fasttable.client.exception.AbortOperation;
-import com.jwh.gwt.fasttable.client.exception.NotFound;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
 import com.jwh.gwt.fasttable.client.selection.SelectionTracker;
-import com.jwh.gwt.fasttable.client.util.IdGenerator;
 import com.jwh.gwt.fasttable.client.util.Style;
+import com.jwh.gwt.html.shared.Tag;
+import com.jwh.gwt.html.shared.event.CellEvent;
+import com.jwh.gwt.html.shared.event.CellHandlerWrapper;
+import com.jwh.gwt.html.shared.event.CellListener;
+import com.jwh.gwt.html.shared.event.CellEvent.OnEvent;
+import com.jwh.gwt.html.shared.exception.AbortOperation;
+import com.jwh.gwt.html.shared.exception.NotFound;
+import com.jwh.gwt.html.shared.util.HtmlFactory;
+import com.jwh.gwt.html.shared.util.HtmlFactory.HtmlElement;
+import com.jwh.gwt.html.shared.util.IdGenerator;
 
 public abstract class TableBuilder<T> {
 

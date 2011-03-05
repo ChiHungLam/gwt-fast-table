@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseWheelEvent;
 
+@Deprecated	// not implemented yet
 public class DragDrop extends HandlesAllMouseEvents {
 
 	enum State {

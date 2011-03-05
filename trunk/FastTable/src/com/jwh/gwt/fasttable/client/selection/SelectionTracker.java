@@ -3,7 +3,7 @@ package com.jwh.gwt.fasttable.client.selection;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import com.jwh.gwt.fasttable.client.exception.AbortOperation;
+import com.jwh.gwt.html.shared.exception.AbortOperation;
 
 public class SelectionTracker<T> {
 	final HashSet<T> selections = new HashSet<T>();
