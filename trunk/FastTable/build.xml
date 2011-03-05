@@ -8,7 +8,7 @@
 	<property name="dist" location="dist" />
 	<property file="build.properties"/>
 
-	<target name="init">
+	<target name="init" depends="clean">
 		<!-- Create the time stamp -->
 		<tstamp />
 		<!-- Create the build directory structure used by compile -->
@@ -40,6 +40,5 @@
 	<target name="clean" description="clean up">
 		<!-- Delete the ${build} and ${dist} directory trees -->
 		<delete dir="${build}" />
-		<delete dir="${dist}" />
 	</target>
 </project>
