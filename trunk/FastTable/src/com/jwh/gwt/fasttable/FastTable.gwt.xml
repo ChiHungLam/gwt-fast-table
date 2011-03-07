@@ -4,12 +4,4 @@
 	<inherits name='com.jwh.gwt.html.Html' />
 	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard' /> -->
 	<source path='client' />
-  <replace-with class="com.jwh.gwt.fasttable.client.ConfigurationIE">
-  <when-type-is class="com.jwh.gwt.fasttable.client.Configuration" />
-    <any>
-      <when-property-is name="user.agent" value="ie6" />
-      <when-property-is name="user.agent" value="ie7" />
-      <when-property-is name="user.agent" value="ie8" />
-    </any>
-  </replace-with>
 </module>

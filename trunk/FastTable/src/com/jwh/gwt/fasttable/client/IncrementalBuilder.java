@@ -22,128 +22,97 @@ public class IncrementalBuilder<T> {
 
 	boolean cancelled = false;
 
-	final int startIndex;
+	int startIndex;
 
 	final TableBuilder<T> tableBuilder;
 	final ArrayList<T> items;
 	/**
 	 * The id of the element where the items should be inserted
 	 */
-	final String refId;
-	final private String myId = IdGenerator.getNextId();
+	String refTbodyId;
+	private String newTbodyId = IdGenerator.getNextId();
 	int scheduleWaitCount = 0;
-	String html;
 
-	String lastId = null;
+	/**
+	 * The last built row
+	 */
+	String lastRowId = null;
 
 	public IncrementalBuilder(TableBuilder<T> builder, ArrayList<T> items, String refId, int startIndex) {
 		super();
 		this.tableBuilder = builder;
 		this.items = items;
-		this.refId = refId;
+		this.refTbodyId = refId;
 		this.startIndex = startIndex;
-		this.tableBuilder.setIncrementalBuilder(this);
 	}
 
 	public void build() {
-		generateHtml();
-		if (cancelled) {
-			return;
-		}
-		scheduleInsert();
+		final Scheduler.RepeatingCommand repeatingCommand = new Scheduler.RepeatingCommand() {
+			@Override
+			public boolean execute() {
+				final String html = generateHtml();
+				if (cancelled) {
+					tableBuilder.logInfo("cancelled incremental build");
+					return false;
+				}
+				final Element previousTBody = getPreviousTBody();
+				if (previousTBody != null) {
+					tableBuilder.logInfo("inserting html - " + startIndex);
+					final com.google.gwt.user.client.Element tBody = DOM.createTBody();
+					newTbodyId = IdGenerator.getNextId();
+					tBody.setId(newTbodyId);
+					tBody.setInnerHTML(html);
+					insertHtml(previousTBody, tBody);
+				} else {
+					// TODO repeat some number of times?
+					tableBuilder.logError("Abandoning insert, cannot find previous tbody - " + startIndex);
+					cancelled = true;
+				}
+				return !cancelled && startIndex < items.size();
+			}
+
+		};
+		 Scheduler.get().scheduleFixedDelay(repeatingCommand, 5);
+//		Scheduler.get().scheduleIncremental(repeatingCommand);
 	}
 
-	/**
-	 * Create a new incremental builder if there are any items remaining
-	 */
-	private void buildRemainingItems() {
-		final int subsequentIncrement = tableBuilder.configuration.getSubsequentIncrement();
-		if (lastId == null || startIndex + subsequentIncrement >= items.size()) {
-			cleanup();
-			return;
-		}
-		if (cancelled) {
-			return;
-		}
-		new IncrementalBuilder<T>(tableBuilder, items, myId, startIndex + subsequentIncrement).build();
+	private int getSubsequentIncrement() {
+		return tableBuilder.configuration.getSubsequentIncrement();
 	}
 
 	public void cancel() {
-		this.cancelled = false;
+		this.cancelled = true;
 	}
 
-	/**
-	 * We are done. Cleanup any "still building" messages
-	 */
-	private void cleanup() {
-	}
-
-	private void generateHtml() {
+	private String generateHtml() {
 		final HtmlElement tbody = HtmlFactory.forRoot(Tag.tbody);
-		final int subsequentIncrement = tableBuilder.configuration.getSubsequentIncrement();
-		for (int i = startIndex; i < Math.min(items.size(), startIndex + subsequentIncrement); i++) {
+		final int stopIndex = Math.min(items.size(), startIndex + getSubsequentIncrement());
+		for (int i = startIndex; i < stopIndex; i++) {
 			final T object = items.get(i);
 			final HtmlElement row = tbody.addChild(Tag.tr);
-			lastId = tableBuilder.table.register(object, row);
-			tableBuilder.populateRowCells(object, row, lastId, i);
+			lastRowId = tableBuilder.table.register(object, row);
+			tableBuilder.populateRowCells(object, row, lastRowId, i);
 			row.cleanup();
 		}
-		html = tbody.toHtml();
+		String html = tbody.toHtml();
 		html = HtmlFactory.trimTag(html, Tag.tbody);
+		return html;
 	}
 
 	private Element getPreviousTBody() {
-		return tableBuilder.getDocument().getElementById(refId);
+		return tableBuilder.getDocument().getElementById(refTbodyId);
 	}
 
 	private void insertHtml(Node previousTBody, Node tBody) {
 		try {
-			if (tableBuilder.configuration.getIncrementalStrategy() == IncrementalStrategy.APPEND) {
-				previousTBody.getParentNode().insertAfter(tBody, previousTBody);
-			} else {
-				previousTBody.getParentNode().replaceChild(tBody, previousTBody);
-			}
+			final Node table = previousTBody.getParentNode();
+			table.insertAfter(tBody, previousTBody);
+			startIndex += getSubsequentIncrement();
+			refTbodyId = newTbodyId;
 		} catch (final Exception e) {
-			// for IE
-			tableBuilder.logError("Error inserting html: " + e.getMessage());
-			tableBuilder.setUseIncrementalBuild(IncrementalStrategy.NONE, true);
-			return;
+			tableBuilder.logError("Cancelling. Error inserting html: " + e.getMessage());
+			cancelled = true;
 		}
-		if (cancelled) {
-			return;
-		}
-		buildRemainingItems();
 	}
 
-	private void scheduleInsert() {
-		tableBuilder.logInfo("scheduling insert for " + startIndex);
-		final Element previousTBody = getPreviousTBody();
-		if (!cancelled && previousTBody == null && scheduleWaitCount < 30) {
-			tableBuilder.logInfo("waiting to insert " + scheduleWaitCount);
-			final Scheduler.ScheduledCommand command = new Scheduler.ScheduledCommand() {
-
-				@Override
-				public void execute() {
-					IncrementalBuilder.this.scheduleInsert();
-				}
-			};
-			scheduleWaitCount++;
-			Scheduler.get().scheduleDeferred(command);
-		} else {
-			if (cancelled) {
-				tableBuilder.logInfo("Incremental insert cancelled - " + startIndex);
-			} else {
-				if (previousTBody != null) {
-					tableBuilder.logInfo("inserting html - " + startIndex);
-					final com.google.gwt.user.client.Element tBody = DOM.createTBody();
-					tBody.setId(myId);
-					tBody.setInnerHTML(html);
-					insertHtml(previousTBody, tBody);
-				} else {
-					tableBuilder.logError("Abandoning insert, waited too long - " + startIndex);
-				}
-			}
-		}
-
-	}
 }
