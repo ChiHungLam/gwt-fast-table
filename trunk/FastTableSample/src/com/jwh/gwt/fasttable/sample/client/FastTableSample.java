@@ -27,6 +27,7 @@ import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.ScrollEvent;
 import com.google.gwt.user.client.Window.ScrollHandler;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -35,7 +36,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.jwh.gwt.fasttable.client.IncrementalStrategy;
 import com.jwh.gwt.fasttable.client.TableBuilder;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
 import com.jwh.gwt.fasttable.client.util.LabelValueUtil;
@@ -43,9 +43,9 @@ import com.jwh.gwt.fasttable.client.util.Logger;
 import com.jwh.gwt.fasttable.client.util.Style;
 import com.jwh.gwt.html.shared.Tag;
 import com.jwh.gwt.html.shared.event.CellEvent;
+import com.jwh.gwt.html.shared.event.CellEvent.OnEvent;
 import com.jwh.gwt.html.shared.event.CellHandlerWrapper;
 import com.jwh.gwt.html.shared.event.CellListener;
-import com.jwh.gwt.html.shared.event.CellEvent.OnEvent;
 import com.jwh.gwt.html.shared.exception.AbortOperation;
 import com.jwh.gwt.html.shared.exception.NotFound;
 import com.jwh.gwt.html.shared.util.HtmlFactory.HtmlElement;
@@ -254,6 +254,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 
 			@Override
 			public void sort(ArrayList<SampleModel> sortMe, int column, TableBuilder.SortAction action) {
+				logger.clear();
 				final SampleModelComparator comparator = new SampleModelComparator(column,
 						action == SortAction.Ascending);
 				Collections.sort(sortMe, comparator);
@@ -298,21 +299,21 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 	}
 
 	private void buildOptionsPanel() {
-		final VerticalPanel verticalPanel = new VerticalPanel();
-		optionsPanel.add(verticalPanel);
-		buildRowCountButtons(verticalPanel);
-		buildIncrementalStrategy(verticalPanel);
-		buildInitialSize(verticalPanel);
-		buildIncrementSize(verticalPanel);
-		buildPushButton(verticalPanel);
+		optionsPanel.add(new Label());
+		final FlexTable flexTable = new FlexTable();
+		optionsPanel.add(flexTable);
+		buildRowCountButtons(flexTable);
+		buildInitialSize(flexTable);
+		buildIncrementSize(flexTable);
+		buildPushButton(flexTable);
 	}
 
-	private void buildIncrementSize(VerticalPanel verticalPanel) {
-		HorizontalPanel horizontalPanel = new HorizontalPanel();
-		verticalPanel.add(horizontalPanel);
-		horizontalPanel.add(new Label("Increment row count"));
+	private void buildIncrementSize(FlexTable flexTable) {
+		final Label label = new Label("Increment row count");
+		label.setTitle("The number of rows to process with each increment after the initial pass");
+		flexTable.setWidget(7, 0, label);
 		final ListBox box = new ListBox();
-		horizontalPanel.add(box);		
+		flexTable.setWidget(7, 1, box);
 		int selection = builder.configuration.getSubsequentIncrement();
 		Integer[] options = new Integer[] {25, 50, 75, 100, 125, 150, Integer.MAX_VALUE};
 		for (Integer integer : options) {
@@ -337,12 +338,12 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 		}		
 	}
 
-	private void buildInitialSize(VerticalPanel verticalPanel) {
-		HorizontalPanel horizontalPanel = new HorizontalPanel();
-		verticalPanel.add(horizontalPanel);
-		horizontalPanel.add(new Label("Initial increment row count"));
+	private void buildInitialSize(FlexTable flexTable) {
+		final Label label = new Label("Initial increment row count");
+		label.setTitle("The number of rows to process in the first pass");
+		flexTable.setWidget(6, 0, label);
 		final ListBox box = new ListBox();
-		horizontalPanel.add(box);		
+		flexTable.setWidget(6, 1, box);
 		int selection = builder.configuration.getInitialIncrement();
 		Integer[] options = new Integer[] {25, 50, 75, 100, 125, 150, Integer.MAX_VALUE};
 		for (Integer integer : options) {
@@ -360,8 +361,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 		});
 	}
 
-	private void buildPushButton(final VerticalPanel verticalPanel) {
-		verticalPanel.add(new Label());
+	private void buildPushButton(final FlexTable flexTable) {
 		final PushButton refreshButton = new PushButton("Refresh Table");
 		refreshButton.setTitle("Build new sample objects and update the table, using options specified above");
 		refreshButton.addClickHandler(new ClickHandler() {
@@ -372,58 +372,13 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 		});
 		refreshButton.addStyleName(BUTTON);
 		refreshButton.addStyleName(CURSOR_POINTER);
-		verticalPanel.add(refreshButton);
+		flexTable.setWidget(9, 0, refreshButton);
+		flexTable.getFlexCellFormatter().setColSpan(9, 0, 2);
 	}
 
-	private void buildIncrementalStrategy(VerticalPanel verticalPanel) {
-		verticalPanel.add(new Label());
-		final String none = "Turn off incremental builder";
-		final String replace = "Replace original rows with incremental rows";			
-		final String append = "Append incremental rows";
-		final ValueChangeHandler<Boolean> handler = new ValueChangeHandler<Boolean>() {	
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				RadioButton selected = (RadioButton) event.getSource();
-				if (none.equals(selected.getFormValue())) {
-					builder.configuration.incrementalStrategy = IncrementalStrategy.NONE;
-				} else if (replace.equals(selected.getFormValue())) {
-					builder.configuration.incrementalStrategy = IncrementalStrategy.REPLACE;
-				} else if (append.equals(selected.getFormValue())) {
-					builder.configuration.incrementalStrategy = IncrementalStrategy.APPEND;
-				} 
-			}
-		};
-		final String incrementalStrategy = "incrementalStrategy";
-		{
-			final RadioButton radio = new RadioButton(incrementalStrategy);
-			radio.setHTML(none);
-			radio.setValue(builder.configuration.incrementalStrategy == IncrementalStrategy.NONE, false);
-			radio.setFormValue(none);
-			radio.addValueChangeHandler(handler);
-			verticalPanel.add(radio);
-			radio.getElement().getParentElement().addClassName(BORDER_NONE);
-		}
-		{
-			final RadioButton radio = new RadioButton(incrementalStrategy);
-			radio.setHTML(append);
-			radio.setValue(builder.configuration.incrementalStrategy == IncrementalStrategy.APPEND, false);
-			radio.setFormValue(append);
-			radio.addValueChangeHandler(handler);
-			verticalPanel.add(radio);
-			radio.getElement().getParentElement().addClassName(BORDER_NONE);
-		}
-		{
-			final RadioButton radio = new RadioButton(incrementalStrategy);
-			radio.setHTML(replace);
-			radio.setValue(builder.configuration.incrementalStrategy == IncrementalStrategy.REPLACE, false);
-			radio.setFormValue(replace);
-			radio.addValueChangeHandler(handler);
-			verticalPanel.add(radio);
-			radio.getElement().getParentElement().addClassName(BORDER_NONE);
-		}
-	}
-
-	private void buildRowCountButtons(VerticalPanel verticalPanel) {
+	private void buildRowCountButtons(FlexTable flexTable) {
+		flexTable.setWidget(0, 0, new Label());
+		flexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
 		final String rows10 = "10 sample rows";
 		final String rows100 = "100 sample rows";
 		final String rows500 = "500 sample rows";
@@ -450,7 +405,8 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			radio.setValue(false, false);
 			radio.setFormValue(rows10);
 			radio.addValueChangeHandler(handler);
-			verticalPanel.add(radio);
+			flexTable.setWidget(1, 0, radio);
+			flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 			radio.getElement().getParentElement().addClassName(BORDER_NONE);
 		}
 		{
@@ -459,7 +415,8 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			radio.setValue(true, false);
 			radio.setFormValue(rows100);
 			radio.addValueChangeHandler(handler);
-			verticalPanel.add(radio);
+			flexTable.setWidget(2, 0, radio);
+			flexTable.getFlexCellFormatter().setColSpan(2, 0, 2);
 			radio.getElement().getParentElement().addClassName(BORDER_NONE);
 		}
 		{
@@ -468,7 +425,8 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			radio.setValue(false, false);
 			radio.setFormValue(rows500);
 			radio.addValueChangeHandler(handler);
-			verticalPanel.add(radio);
+			flexTable.setWidget(3, 0, radio);
+			flexTable.getFlexCellFormatter().setColSpan(3, 0, 2);
 			radio.getElement().getParentElement().addClassName(BORDER_NONE);
 		}
 		{
@@ -477,7 +435,8 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 			radio.setValue(false, false);
 			radio.setFormValue(rows1000);
 			radio.addValueChangeHandler(handler);
-			verticalPanel.add(radio);
+			flexTable.setWidget(4, 0, radio);
+			flexTable.getFlexCellFormatter().setColSpan(4, 0, 2);
 			radio.getElement().getParentElement().addClassName(BORDER_NONE);
 		}
 	}
