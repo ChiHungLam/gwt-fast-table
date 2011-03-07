@@ -21,4 +21,4 @@ What is coming:
   * ~~*Support for single and multiple select*~~ _*DONE*_
   * ~~*Drop Down Panel*~~ - Support for drop down panel under selected row _*DONE*_
   * *Simple table utility*  - for quickly building typical GUI panels  _*Prototype Implementation*_
-  * *Elaborate HTML Generation* - Refine tags, move into its own project, add DOM utilities
+  * *Elaborate HTML Generation* - Refine tags, move into its own project, add DOM utilities _*Prototype Implementation*_
