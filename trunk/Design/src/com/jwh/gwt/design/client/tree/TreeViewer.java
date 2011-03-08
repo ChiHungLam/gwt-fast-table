@@ -28,13 +28,15 @@ public class TreeViewer<T> {
 	 * @param parent
 	 */
 	public void add(final T child, final T parent) {
-		getItem(child, parent);
+		TreeItem item = getItem(child, parent);
+		tree.setSelectedItem(item);
 	}
 
 	private TreeItem createItem(final T child, final HasTreeItems parent) {
 		final TreeItem childItem = new TreeItem();
 		supplier.populate(childItem, child);
 		parent.addItem(childItem);
+		lookup.put(child, childItem);
 		return childItem;
 	}
 
@@ -84,8 +86,8 @@ public class TreeViewer<T> {
 	}
 
 	public void select(final T child) throws NotFound {
-		final TreeItem childItem = getItem(child);
-		childItem.setSelected(true);
+		final TreeItem item = getItem(child);
+		tree.setSelectedItem(item);
 	}
 
 	public void update(final T child) throws NotFound {
