@@ -315,7 +315,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 		final ListBox box = new ListBox();
 		flexTable.setWidget(7, 1, box);
 		int selection = builder.configuration.getSubsequentIncrement();
-		Integer[] options = new Integer[] {25, 50, 75, 100, 125, 150, Integer.MAX_VALUE};
+		Integer[] options = new Integer[] {25, 50, 75, 100, 125, 150, 50000};
 		for (Integer integer : options) {
 			addOption(box, integer, selection);
 		}
@@ -345,7 +345,7 @@ public class FastTableSample implements EntryPoint, SampleStyle {
 		final ListBox box = new ListBox();
 		flexTable.setWidget(6, 1, box);
 		int selection = builder.configuration.getInitialIncrement();
-		Integer[] options = new Integer[] {25, 50, 75, 100, 125, 150, Integer.MAX_VALUE};
+		Integer[] options = new Integer[] {25, 50, 75, 100, 125, 150, 50000};
 		for (Integer integer : options) {
 			addOption(box, integer, selection);
 		}
