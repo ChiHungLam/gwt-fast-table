@@ -8,8 +8,8 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.user.client.DOM;
 import com.jwh.gwt.html.shared.Tag;
 import com.jwh.gwt.html.shared.util.HtmlFactory;
-import com.jwh.gwt.html.shared.util.IdGenerator;
 import com.jwh.gwt.html.shared.util.HtmlFactory.HtmlElement;
+import com.jwh.gwt.html.shared.util.IdGenerator;
 
 /**
  * Because only a limited number of table elements are available at a time
@@ -57,12 +57,17 @@ public class IncrementalBuilder<T> {
 				}
 				final Element previousTBody = getPreviousTBody();
 				if (previousTBody != null) {
-					tableBuilder.logInfo("inserting html - " + startIndex);
-					final com.google.gwt.user.client.Element tBody = DOM.createTBody();
+					tableBuilder.logInfo("inserting html at " + startIndex);
+					// see http://www.ericvasilik.com/2006/07/code-karma.html
+					final com.google.gwt.user.client.Element span = DOM.createSpan();
+					span.setAttribute("style", "visibility:hidden");
+					span.setInnerHTML("<table><tbody>" + html);
+					final Element table = span.getFirstChildElement();
+					final Element tbody = table.getFirstChildElement();
+					table.appendChild(tbody);
 					newTbodyId = IdGenerator.getNextId();
-					tBody.setId(newTbodyId);
-					tBody.setInnerHTML(html);
-					insertHtml(previousTBody, tBody);
+					tbody.setId(newTbodyId);
+					insertHtml(previousTBody, tbody);
 				} else {
 					// TODO repeat some number of times?
 					tableBuilder.logError("Abandoning insert, cannot find previous tbody - " + startIndex);
@@ -73,7 +78,6 @@ public class IncrementalBuilder<T> {
 
 		};
 		 Scheduler.get().scheduleFixedDelay(repeatingCommand, 5);
-//		Scheduler.get().scheduleIncremental(repeatingCommand);
 	}
 
 	private int getSubsequentIncrement() {
