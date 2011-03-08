@@ -1,7 +1,12 @@
 package com.jwh.gwt.design.client;
 
+import java.util.EnumSet;
+
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.EventTarget;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -21,6 +26,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.jwh.gwt.design.client.tree.TreeNodeSupplier;
 import com.jwh.gwt.design.client.tree.TreeViewer;
 import com.jwh.gwt.html.shared.Attribute;
+import com.jwh.gwt.html.shared.CreationListener;
 import com.jwh.gwt.html.shared.Tag;
 import com.jwh.gwt.html.shared.TagUtil;
 import com.jwh.gwt.html.shared.util.IdGenerator;
@@ -29,11 +35,7 @@ import com.jwh.gwt.html.shared.util.IdGenerator;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Design implements EntryPoint, ValueChangeHandler<String>, EventListener, Style, ClickHandler,
-		TreeNodeSupplier<Element> {
-
-	public enum Operation {
-		tableInsert, tableHeaderRow, tableRow, tableFooterRow, tableCell, moveUp, moveDown, label, value, labelValue, binderId, styleAdd, styleRemove
-	}
+		TreeNodeSupplier<Element>, CreationListener<Element> {
 
 	class Operations {
 		private void binderId() {
@@ -45,6 +47,9 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 			switch (op) {
 			case binderId:
 				binderId();
+				break;
+			case delete:
+				delete();
 				break;
 			case label:
 				label();
@@ -79,46 +84,73 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 			case tableRow:
 				tableRow();
 				break;
+			case value:
+				value();
 			default:
 				break;
 			}
 		}
 
-		private void label() {
-			{
-				final Element tr = TagUtil.assureParents(currentElement, Tag.tr, Tag.tbody, Tag.table);
-				setCurrentElement(tr);
-				final Element labelCell = TagUtil.appendChild(tr, Tag.td);
-				final Element label = TagUtil.appendChild(labelCell, Tag.label);
-				label.setInnerText("Label");
-				setPropertyFocus(label);
+		private void value() {
+			final Element tr = tagUtil.assureParents(currentElement, Tag.tr, Tag.tbody, Tag.table);
+			setCurrentElement(tr);
+			final Element labelCell = tagUtil.appendChild(tr, Tag.td);
+			labelCell.setInnerText("Value");
+			labelCell.setAttribute(Attribute.SAMPLE, "Value");
+			setPropertyFocus(labelCell);
+		}
+
+		private void delete() {
+			if (currentElement != null) {
+				currentElement = (Element) currentElement.getParentElement();
+				currentElement.removeFromParent();
 			}
+
+		}
+
+		final TagUtil tagUtil = new TagUtil(Design.this);
+
+		private void label() {
+			final Element tr = tagUtil.assureParents(currentElement, Tag.tr, Tag.tbody, Tag.table);
+			setCurrentElement(tr);
+			final Element labelCell = tagUtil.appendChild(tr, Tag.td);
+			final Element label = tagUtil.appendChild(labelCell, Tag.label);
+			label.setInnerText("Label");
+			setPropertyFocus(label);
 		}
 
 		private void labelValue() {
-			{
-				final Element tr = TagUtil.assureParents(currentElement, Tag.tr, Tag.tbody, Tag.table);
-				setCurrentElement(tr);
-				final Element labelCell = TagUtil.appendChild(tr, Tag.td);
-				final Element label = TagUtil.appendChild(labelCell, Tag.label);
-				label.setInnerText("Label");
-				final Element valueCell = TagUtil.appendChild(tr, Tag.td);
-				final String id = IdGenerator.getNextId();
-				valueCell.setId(id);
-				valueCell.setInnerText("Value");
-				label.setAttribute(Attribute.FOR, id);
-				setPropertyFocus(label, valueCell);
-			}
+			final Element tr = tagUtil.assureParents(currentElement, Tag.tr, Tag.tbody, Tag.table);
+			setCurrentElement(tr);
+			final Element labelCell = tagUtil.appendChild(tr, Tag.td);
+			final Element label = tagUtil.appendChild(labelCell, Tag.label);
+			label.setInnerText("Label");
+			final Element valueCell = tagUtil.appendChild(tr, Tag.td);
+			final String id = IdGenerator.getNextId();
+			valueCell.setId(id);
+			valueCell.setInnerText("Value");
+			label.setAttribute(Attribute.FOR, id);
+			setPropertyFocus(label, valueCell);
 		}
 
 		private void moveDown() {
-			// TODO Auto-generated method stub
-
+			// TODO Synchronize tree
+			Element parentElement = (Element) currentElement.getParentElement();
+			Node nextSibling = currentElement.getNextSibling();
+			if (parentElement != null && nextSibling != null) {
+				currentElement.removeFromParent();
+				parentElement.insertAfter(currentElement, nextSibling);
+			}
 		}
 
 		private void moveUp() {
-			// TODO Auto-generated method stub
-
+			// TODO Synchronize tree
+			Element parentElement = (Element) currentElement.getParentElement();
+			Node previousSibling = currentElement.getPreviousSibling();
+			if (parentElement != null && previousSibling != null) {
+				currentElement.removeFromParent();
+				parentElement.insertBefore(currentElement, previousSibling);
+			}
 		}
 
 		private void styleAdd() {
@@ -132,22 +164,24 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 		}
 
 		private void tableCell() {
-			{
-				final Element tr = TagUtil.assureParents(currentElement, Tag.tr, Tag.tbody, Tag.table);
-				final Element cell = TagUtil.appendChild(tr, Tag.td);
-				setCurrentElement(tr);
-				setPropertyFocus(cell);
-			}
+			final Element tr = tagUtil.assureParents(currentElement, Tag.tr, Tag.tbody, Tag.table);
+			final Element cell = tagUtil.appendChild(tr, Tag.td);
+			setCurrentElement(tr);
+			setPropertyFocus(cell);
 		}
 
 		private void tableFooterRow() {
-			// TODO Auto-generated method stub
-
+			final Element tfoot = tagUtil.assureParents(currentElement, Tag.tfoot, Tag.table);
+			final Element tr = tagUtil.appendChild(tfoot, Tag.tr);
+			setCurrentElement(tr);
+			setPropertyFocus(tr);
 		}
 
 		private void tableHeaderRow() {
-			// TODO Auto-generated method stub
-
+			final Element thead = tagUtil.assureParents(currentElement, Tag.thead, Tag.table);
+			final Element tr = tagUtil.appendChild(thead, Tag.tr);
+			setCurrentElement(tr);
+			setPropertyFocus(tr);
 		}
 
 		private void tableInsert() {
@@ -158,12 +192,10 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 		}
 
 		private void tableRow() {
-			{
-				final Element tbody = TagUtil.assureParents(currentElement, Tag.tbody, Tag.table);
-				final Element row = TagUtil.appendChild(tbody, Tag.tr);
-				setCurrentElement(row);
-				setPropertyFocus(row);
-			}
+			final Element tbody = tagUtil.assureParents(currentElement, Tag.tbody, Tag.table);
+			final Element row = tagUtil.appendChild(tbody, Tag.tr);
+			setCurrentElement(row);
+			setPropertyFocus(row);
 		}
 	}
 
@@ -171,7 +203,8 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 	private RootPanel targetPanel;
 	private RootPanel toolsPanel;
 
-	TreeViewer<Element> tree = new TreeViewer<Element>(new Tree(), this);
+	final Tree tree = new Tree();
+	final TreeViewer<Element> treeViewer = new TreeViewer<Element>(tree, this);
 	Element currentElement;
 	private SuggestBox commandBox;
 	private TextBox textBox;
@@ -182,6 +215,7 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 
 	private void addOnClick(final Element element) {
 		DOM.setEventListener(element, this);
+		DOM.sinkEvents(element, Event.ONMOUSEDOWN);
 	}
 
 	private void buildToolsPanel() {
@@ -214,6 +248,7 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 
 	@Override
 	public void onBrowserEvent(final Event event) {
+		System.err.println(event.getTypeInt());
 		switch (event.getTypeInt()) {
 		case Event.ONCLICK:
 			final EventTarget eventTarget = event.getEventTarget();
@@ -238,9 +273,28 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 			}
 		} else if (event.getSource() instanceof Element) {
 			final Element element = (Element) event.getSource();
-			setCurrentElement(element);
+			if (currentElement == element && isInPlaceEditable(element)) {
+				new InPlaceEditor(element);
+			} else {
+				setCurrentElement(element);
+			}
 		}
 
+	}
+
+	/**
+	 * @param element
+	 * @return true if this tag has editable text
+	 */
+	private boolean isInPlaceEditable(Element element) {
+		String tagName = element.getTagName();
+		EnumSet<Tag> editable = EnumSet.of(Tag.label, Tag.td, Tag.th);
+		for (Tag tag : editable) {
+			if (tag.name().equalsIgnoreCase(tagName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -249,6 +303,7 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 		targetPanel = RootPanel.get("targetPanel");
 		toolsPanel = RootPanel.get("toolsPanel");
 		final RootPanel treePanel = RootPanel.get("treePanel");
+		treePanel.add(tree);
 		buildToolsPanel();
 		initializeTargetPanel();
 	}
@@ -274,12 +329,13 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 
 	@Override
 	public void populate(final TreeItem item, final Element obj) {
-		item.setText(obj.getTagName());
-	}
-
-	private void register(final Element element) {
-		addOnClick(element);
-		tree.add(element, (Element) element.getParentElement());
+		final StringBuilder b = new StringBuilder(obj.getTagName());
+		final String innerText = obj.getInnerText();
+		if (innerText != null && innerText.length() > 0) {
+			b.append(" - ");
+			b.append(innerText);
+		}
+		item.setText(b.toString());
 	}
 
 	private void setCurrentElement(final Element newElement) {
@@ -291,14 +347,22 @@ public class Design implements EntryPoint, ValueChangeHandler<String>, EventList
 	}
 
 	private void setPropertyFocus(final Element... element) {
-		for (final Element e : element) {
-			addOnClick(e);
-		}
 		this.propertyFocus = element;
 	}
 
 	@Override
 	public void update(final TreeItem item, final Element obj) {
 		populate(item, obj);
+	}
+
+	@Override
+	public void created(final Element obj) {
+		addOnClick(obj);
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {			
+			@Override
+			public void execute() {
+				treeViewer.add(obj, (Element) obj.getParentElement());
+			}
+		});
 	}
 }
