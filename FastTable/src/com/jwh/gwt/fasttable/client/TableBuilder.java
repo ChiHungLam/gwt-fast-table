@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Panel;
 import com.jwh.gwt.fasttable.client.element.Table;
 import com.jwh.gwt.fasttable.client.selection.SelectionListener;
@@ -13,9 +12,9 @@ import com.jwh.gwt.fasttable.client.selection.SelectionTracker;
 import com.jwh.gwt.fasttable.client.util.Style;
 import com.jwh.gwt.html.shared.Tag;
 import com.jwh.gwt.html.shared.event.CellEvent;
+import com.jwh.gwt.html.shared.event.CellEvent.OnEvent;
 import com.jwh.gwt.html.shared.event.CellHandlerWrapper;
 import com.jwh.gwt.html.shared.event.CellListener;
-import com.jwh.gwt.html.shared.event.CellEvent.OnEvent;
 import com.jwh.gwt.html.shared.exception.AbortOperation;
 import com.jwh.gwt.html.shared.exception.NotFound;
 import com.jwh.gwt.html.shared.util.HtmlFactory;
@@ -125,12 +124,6 @@ public abstract class TableBuilder<T> {
 	public Table<T> table = new Table<T>();
 
 	public Configuration configuration = new Configuration();
-	{
-		if (!isIncrementalBuilderSupported()) {
-			configuration.initialIncrement = Integer.MAX_VALUE;
-			configuration.subsequentIncrement = Integer.MAX_VALUE;
-		}
-	}
 	
 	public void add(T domainObject, Position position) {
 		// TODO
@@ -364,13 +357,6 @@ public abstract class TableBuilder<T> {
 		this.incrementalBuilder = incrementalBuilder;
 	}
 
-	@Deprecated
-	public void setUseIncrementalBuild(boolean updateView) {
-		if (updateView) {
-			updateView();
-		}
-	}
-
 	public static native String getUserAgent() /*-{
 		return navigator.userAgent.toLowerCase();
 	}-*/;
@@ -420,20 +406,6 @@ public abstract class TableBuilder<T> {
 	 */
 	public void sort(ArrayList<T> sortMe, int column, SortAction action) {
 
-	}
-
-	public boolean isIncrementalBuilderSupported() {
-		final String userAgent = getUserAgent();
-		logInfo(userAgent);
-		final String[] incompatible = {"msie 6", "msie 7", "msie 8"};
-		if (userAgent != null) {
-			for (String bad : incompatible) {
-				if (userAgent.indexOf(bad) >= 0) {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 
 	public void updateView() {
