@@ -60,33 +60,13 @@ public class Table<T> {
 
 	/**
 	 * A little magic happens here. All cell event handlers call a function
-	 * named "fnct"[+digit]. Because GWT will obfuscate function names, we must
+	 * named "jwht"[+digit]. Because GWT will obfuscate function names, we must
 	 * dynamically generate the expected function using JSNI.
 	 * 
-	 * @return
+	 * @return the function name
 	 */
-	private int defineCellHandler() {
-		final int current = instanceCounter++;
-		// assert current <= 3 :
-		// "currently only 4 cell handlers are supported per page";
-		switch (current) {
-		case 0:
-			defineCellHandler0(this);
-			return 0;
-			// case 1:
-			// defineCellHandler1(this);
-			// return 1;
-			// case 2:
-			// defineCellHandler2(this);
-			// return 2;
-			// case 3:
-			// defineCellHandler3(this);
-			// return 3;
-		default:
-			// should never get here
-			defineCellHandler0(this);
-			return 0;
-		}
+	private String defineCellHandler() {
+		return new FunctionBuilder<T>().registerCallbackFunction(this);
 	}
 
 	public native void defineCellHandler0(Table<T> x)/*-{

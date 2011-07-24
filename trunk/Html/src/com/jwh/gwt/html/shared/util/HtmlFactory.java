@@ -82,7 +82,7 @@ public class HtmlFactory {
 			assert isAppropriate(State.StartTag) : "attributes should be added before " + currentState;
 			for (final OnEvent onEvent : wrapper.onEvents) {
 				builder.append(onEvent.name());
-				builder.append("=\"window.fctn");
+				builder.append("=\"window.");
 				builder.append(wrapper.functionId);
 				builder.append("('");
 				builder.append(wrapper.id);
