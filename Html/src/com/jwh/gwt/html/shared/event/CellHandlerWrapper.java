@@ -35,7 +35,7 @@ public class CellHandlerWrapper<T> {
 	 * All the events for which the handler applies
 	 */
 	public final ArrayList<OnEvent> onEvents = new ArrayList<OnEvent>();
-	public int functionId;
+	public String functionId;
 
 	public CellHandlerWrapper(final CellListener<T> cellListener, final OnEvent... onEvents) {
 		this.id = currentId++;
@@ -51,7 +51,7 @@ public class CellHandlerWrapper<T> {
 	 *            Identifies the corresponding JSNI callback function to use. @see
 	 *            Table.defineCellHandler
 	 */
-	public void setFunctionId(final int functionId) {
+	public void setFunctionId(final String functionId) {
 		this.functionId = functionId;
 	}
 
