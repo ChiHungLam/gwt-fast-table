@@ -350,6 +350,9 @@ public abstract class TableBuilder<T> {
 	}
 
 	public void setFilter(Filter<T> filter) {
+		if (allObjects == filteredObjects) {
+			filteredObjects = new ArrayList<T>(allObjects);
+		}
 		this.filter = filter;
 	}
 
